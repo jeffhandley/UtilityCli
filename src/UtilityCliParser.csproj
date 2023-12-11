@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>A command-line parser for simple utility applications</Title>
+    <Version>0.1.0-preview</Version>
+    <Authors>jeffhandley</Authors>
+    <PackageProjectUrl>https://github.com/jeffhandley/UtilityCliParser</PackageProjectUrl>
+    <Description>This command-line parser can be used for simple utility console application scenarios. As a wrapper around System.CommandLine, UtilityCliParser provides easy support for happy-path scenarios without requiring the commands, options, and arguments to be predefined or modeled before parsing. UtilityCliParser is not intended for CLI applications that are distributed to other users; rather it's intended for utility applications you create for yourself.</Description>
+    <Product>UtilityCliParser</Product>
+    <RepositoryUrl>https://github.com/jeffhandley/UtilityCliParser</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+  </ItemGroup>
+
+</Project>
