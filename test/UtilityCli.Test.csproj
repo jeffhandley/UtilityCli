@@ -14,8 +14,11 @@
         CA1825:
           - Avoid zero-length array allocations
           - This rule makes MemberData methods less readable
+        CA1861:
+          - Prefer static readonly fields over constant array arguments 
+          - This rule does not work well with InlineData attributes
     -->
-    <NoWarn>$(NoWarn);CA1825</NoWarn>
+    <NoWarn>$(NoWarn);CA1825;CA1861</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

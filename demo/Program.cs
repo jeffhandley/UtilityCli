@@ -15,7 +15,9 @@
     "--string", "value",
     "--uint16", "8",
     "--uint32", "9",
-    "--uint64", "10"
+    "--uint64", "10",
+    "string-value",
+    "11",
 ]);
 
 byte? byte_ = cli.GetByte("byte", shortNames: []);
@@ -25,7 +27,7 @@ DateTimeOffset? datetimeoffset_ = cli.GetDateTimeOffset("datetimeoffset", shortN
 decimal? decimal_ = cli.GetDecimal("decimal", shortNames: []);
 double? double_ = cli.GetDouble("double", shortNames: []);
 Guid? guid_ = cli.GetGuid("guid");
-bool boolean_ = cli.GetBoolean("boolean");
+bool? boolean_ = cli.GetBoolean("boolean");
 short? int16_ = cli.GetInt16("int16", shortNames: []);
 int? int32_ = cli.GetInt32("int32");
 long? int64_ = cli.GetInt64("int64", shortNames: []);
@@ -35,6 +37,9 @@ string? string_ = cli.GetString("string");
 ushort? uint16_ = cli.GetUInt16("uint16", shortNames: []);
 uint? uint32_ = cli.GetUInt32("uint32");
 ulong? uint64_ = cli.GetUInt64("uint64", shortNames: []);
+
+string? arg0_string = cli.GetString();
+byte? arg1_byte = cli.GetByte();
 
 Console.WriteLine($"byte: {byte_}");
 Console.WriteLine($"char: {char_}");
@@ -53,3 +58,5 @@ Console.WriteLine($"string: {string_}");
 Console.WriteLine($"uint16: {uint16_}");
 Console.WriteLine($"uint32: {uint32_}");
 Console.WriteLine($"uint64: {uint64_}");
+Console.WriteLine($"arg0_string: {arg0_string}");
+Console.WriteLine($"arg1_byte: {arg1_byte}");
