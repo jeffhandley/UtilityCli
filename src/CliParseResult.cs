@@ -116,101 +116,101 @@ public struct CliParseResult
     public ulong? GetUInt64(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<ulong>(name, aliases, shortNames);
 
 
-    //public bool[] GetBooleans(ushort maxValues = ushort.MaxValue) => GetArgumentValues<bool>(maxValues).ToArray();
-    //public bool[] GetBooleans(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<bool[]>(name, maxValues: maxValues);
-    //public bool[] GetBooleans(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<bool[]>(name, shortNames: [shortName]);
-    //public bool[] GetBooleans(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<bool[]>(name, aliases, shortNames, maxValues);
+    //public bool[] GetBooleans(ushort maxValues) => GetArgumentValues<bool>(maxValues).ToArray();
+    //public bool[] GetBooleans(string name) => GetNullableStructOptionValue<bool[]>(name);
+    //public bool[] GetBooleans(string name, char shortName) => GetNullableStructOptionValue<bool[]>(name, shortNames: [shortName]);
+    //public bool[] GetBooleans(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<bool[]>(name, aliases, shortNames);
 
-    //public byte[] GetBytes(ushort maxValues = ushort.MaxValue) => GetArgumentValues<byte>(maxValues).ToArray();
-    public byte[]? GetBytes(string name, ushort maxValues) => GetNullableReferenceOptionValue<byte[]>(name, maxValues: maxValues);
-    public byte[]? GetBytes(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableReferenceOptionValue<byte[]>(name, shortNames: [shortName], maxValues: maxValues);
-    public byte[]? GetBytes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableReferenceOptionValue<byte[]>(name, aliases, shortNames, maxValues);
+    //public byte[] GetBytes(ushort maxValues) => GetArgumentValues<byte>(maxValues).ToArray();
+    public byte[]? GetBytes(string name) => GetNullableReferenceOptionValue<byte[]>(name);
+    public byte[]? GetBytes(string name, char shortName) => GetNullableReferenceOptionValue<byte[]>(name, shortNames: [shortName]);
+    public byte[]? GetBytes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<byte[]>(name, aliases, shortNames);
 
-    //public short[] GetInt16s(ushort maxValues = ushort.MaxValue) => GetArgumentValues<short>(maxValues).ToArray();
-    //public short[] GetInt16s(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<short[]>(name, maxValues: maxValues);
-    //public short[] GetInt16s(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<short[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public short[] GetInt16s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<short[]>(name, aliases, shortNames, maxValues);
+    //public short[] GetInt16s(ushort maxValues) => GetArgumentValues<short>(maxValues).ToArray();
+    //public short[] GetInt16s(string name) => GetNullableStructOptionValue<short[]>(name);
+    //public short[] GetInt16s(string name, char shortName) => GetNullableStructOptionValue<short[]>(name, shortNames: [shortName]);
+    //public short[] GetInt16s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<short[]>(name, aliases, shortNames);
 
-    //public int[] GetInt32s(ushort maxValues = ushort.MaxValue) => GetArgumentValues<int>(maxValues).ToArray();
-    //public int[] GetInt32s(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<int[]>(name, maxValues: maxValues);
-    //public int[] GetInt32s(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<int[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public int[] GetInt32s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<int[]>(name, aliases, shortNames, maxValues);
+    //public int[] GetInt32s(ushort maxValues) => GetArgumentValues<int>(maxValues).ToArray();
+    //public int[] GetInt32s(string name) => GetNullableStructOptionValue<int[]>(name);
+    //public int[] GetInt32s(string name, char shortName) => GetNullableStructOptionValue<int[]>(name, shortNames: [shortName]);
+    //public int[] GetInt32s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<int[]>(name, aliases, shortNames);
 
-    //public long[] GetInt64s(ushort maxValues = ushort.MaxValue) => GetArgumentValues<long>(maxValues).ToArray();
-    //public long[] GetInt64s(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<long[]>(name, maxValues: maxValues);
-    //public long[] GetInt64s(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<long[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public long[] GetInt64s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<long[]>(name, aliases, shortNames, maxValues);
+    //public long[] GetInt64s(ushort maxValues) => GetArgumentValues<long>(maxValues).ToArray();
+    //public long[] GetInt64s(string name) => GetNullableStructOptionValue<long[]>(name);
+    //public long[] GetInt64s(string name, char shortName) => GetNullableStructOptionValue<long[]>(name, shortNames: [shortName]);
+    //public long[] GetInt64s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<long[]>(name, aliases, shortNames);
 
-    //public float[] GetSingles(ushort maxValues = ushort.MaxValue) => GetArgumentValues<float>(maxValues).ToArray();
-    //public float[] GetSingles(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<float[]>(name, maxValues: maxValues);
-    //public float[] GetSingles(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<float[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public float[] GetSingles(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<float[]>(name, aliases, shortNames, maxValues);
+    //public float[] GetSingles(ushort maxValues) => GetArgumentValues<float>(maxValues).ToArray();
+    //public float[] GetSingles(string name) => GetNullableStructOptionValue<float[]>(name);
+    //public float[] GetSingles(string name, char shortName) => GetNullableStructOptionValue<float[]>(name, shortNames: [shortName]);
+    //public float[] GetSingles(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<float[]>(name, aliases, shortNames);
 
-    //public double[] GetDoubles(ushort maxValues = ushort.MaxValue) => GetArgumentValues<double>(maxValues).ToArray();
-    //public double[] GetDoubles(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<double[]>(name, maxValues: maxValues);
-    //public double[] GetDoubles(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<double[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public double[] GetDoubles(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<double[]>(name, aliases, shortNames, maxValues);
+    //public double[] GetDoubles(ushort maxValues) => GetArgumentValues<double>(maxValues).ToArray();
+    //public double[] GetDoubles(string name) => GetNullableStructOptionValue<double[]>(name);
+    //public double[] GetDoubles(string name, char shortName) => GetNullableStructOptionValue<double[]>(name, shortNames: [shortName]);
+    //public double[] GetDoubles(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<double[]>(name, aliases, shortNames);
 
-    //public decimal[] GetDecimals(ushort maxValues = ushort.MaxValue) => GetArgumentValues<decimal>(maxValues).ToArray();
-    //public decimal[] GetDecimals(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<decimal[]>(name, maxValues: maxValues);
-    //public decimal[] GetDecimals(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<decimal[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public decimal[] GetDecimals(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<decimal[]>(name, aliases, shortNames, maxValues);
+    //public decimal[] GetDecimals(ushort maxValues) => GetArgumentValues<decimal>(maxValues).ToArray();
+    //public decimal[] GetDecimals(string name) => GetNullableStructOptionValue<decimal[]>(name);
+    //public decimal[] GetDecimals(string name, char shortName) => GetNullableStructOptionValue<decimal[]>(name, shortNames: [shortName]);
+    //public decimal[] GetDecimals(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<decimal[]>(name, aliases, shortNames);
 
-    //public string[] GetStrings(ushort maxValues = ushort.MaxValue) => GetArgumentValues<string>(maxValues).ToArray();
-    //public string[] GetStrings(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<string[]>(name, maxValues: maxValues);
-    //public string[] GetStrings(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<string[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public string[] GetStrings(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<string[]>(name, aliases, shortNames, maxValues);
+    //public string[] GetStrings(ushort maxValues) => GetArgumentValues<string>(maxValues).ToArray();
+    //public string[] GetStrings(string name) => GetNullableStructOptionValue<string[]>(name);
+    //public string[] GetStrings(string name, char shortName) => GetNullableStructOptionValue<string[]>(name, shortNames: [shortName]);
+    //public string[] GetStrings(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<string[]>(name, aliases, shortNames);
 
-    //public char[] GetChars(ushort maxValues = ushort.MaxValue) => GetArgumentValues<char>(maxValues).ToArray();
-    //public char[] GetChars(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<char[]>(name, maxValues: maxValues);
-    //public char[] GetChars(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<char[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public char[] GetChars(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<char[]>(name, aliases, shortNames, maxValues);
+    //public char[] GetChars(ushort maxValues) => GetArgumentValues<char>(maxValues).ToArray();
+    //public char[] GetChars(string name) => GetNullableStructOptionValue<char[]>(name);
+    //public char[] GetChars(string name, char shortName) => GetNullableStructOptionValue<char[]>(name, shortNames: [shortName]);
+    //public char[] GetChars(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<char[]>(name, aliases, shortNames);
 
-    //public DateTime[] GetDateTimes(ushort maxValues = ushort.MaxValue) => GetArgumentValues<DateTime>(maxValues).ToArray();
-    //public DateTime[] GetDateTimes(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<DateTime[]>(name, maxValues: maxValues);
-    //public DateTime[] GetDateTimes(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<DateTime[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public DateTime[] GetDateTimes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<DateTime[]>(name, aliases, shortNames, maxValues);
+    //public DateTime[] GetDateTimes(ushort maxValues) => GetArgumentValues<DateTime>(maxValues).ToArray();
+    //public DateTime[] GetDateTimes(string name) => GetNullableStructOptionValue<DateTime[]>(name);
+    //public DateTime[] GetDateTimes(string name, char shortName) => GetNullableStructOptionValue<DateTime[]>(name, shortNames: [shortName]);
+    //public DateTime[] GetDateTimes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<DateTime[]>(name, aliases, shortNames);
 
-    //public DateTimeOffset[] GetDateTimeOffsets(ushort maxValues = ushort.MaxValue) => GetArgumentValues<DateTimeOffset>(maxValues).ToArray();
-    //public DateTimeOffset[] GetDateTimeOffsets(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<DateTimeOffset[]>(name, maxValues: maxValues);
-    //public DateTimeOffset[] GetDateTimeOffsets(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<DateTimeOffset[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public DateTimeOffset[] GetDateTimeOffsets(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<DateTimeOffset[]>(name, aliases, shortNames, maxValues);
+    //public DateTimeOffset[] GetDateTimeOffsets(ushort maxValues) => GetArgumentValues<DateTimeOffset>(maxValues).ToArray();
+    //public DateTimeOffset[] GetDateTimeOffsets(string name) => GetNullableStructOptionValue<DateTimeOffset[]>(name);
+    //public DateTimeOffset[] GetDateTimeOffsets(string name, char shortName) => GetNullableStructOptionValue<DateTimeOffset[]>(name, shortNames: [shortName]);
+    //public DateTimeOffset[] GetDateTimeOffsets(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<DateTimeOffset[]>(name, aliases, shortNames);
 
-    //public Guid[] GetGuids(ushort maxValues = ushort.MaxValue) => GetArgumentValues<Guid>(maxValues).ToArray();
-    //public Guid[] GetGuids(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<Guid[]>(name, maxValues: maxValues);
-    //public Guid[] GetGuids(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<Guid[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public Guid[] GetGuids(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<Guid[]>(name, aliases, shortNames, maxValues);
+    //public Guid[] GetGuids(ushort maxValues) => GetArgumentValues<Guid>(maxValues).ToArray();
+    //public Guid[] GetGuids(string name) => GetNullableStructOptionValue<Guid[]>(name);
+    //public Guid[] GetGuids(string name, char shortName) => GetNullableStructOptionValue<Guid[]>(name, shortNames: [shortName]);
+    //public Guid[] GetGuids(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<Guid[]>(name, aliases, shortNames);
 
-    //public sbyte[] GetSBytes(ushort maxValues = ushort.MaxValue) => GetArgumentValues<sbyte>(maxValues).ToArray();
-    //public sbyte[] GetSBytes(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<sbyte[]>(name, maxValues: maxValues);
-    //public sbyte[] GetSBytes(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<sbyte[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public sbyte[] GetSBytes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<sbyte[]>(name, aliases, shortNames, maxValues);
+    //public sbyte[] GetSBytes(ushort maxValues) => GetArgumentValues<sbyte>(maxValues).ToArray();
+    //public sbyte[] GetSBytes(string name) => GetNullableStructOptionValue<sbyte[]>(name);
+    //public sbyte[] GetSBytes(string name, char shortName) => GetNullableStructOptionValue<sbyte[]>(name, shortNames: [shortName]);
+    //public sbyte[] GetSBytes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<sbyte[]>(name, aliases, shortNames);
 
-    //public ushort[] GetUInt16s(ushort maxValues = ushort.MaxValue) => GetArgumentValues<ushort>(maxValues).ToArray();
-    //public ushort[] GetUInt16s(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<ushort[]>(name, maxValues: maxValues);
-    //public ushort[] GetUInt16s(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<ushort[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public ushort[] GetUInt16s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<ushort[]>(name, aliases, shortNames, maxValues);
+    //public ushort[] GetUInt16s(ushort maxValues) => GetArgumentValues<ushort>(maxValues).ToArray();
+    //public ushort[] GetUInt16s(string name) => GetNullableStructOptionValue<ushort[]>(name);
+    //public ushort[] GetUInt16s(string name, char shortName) => GetNullableStructOptionValue<ushort[]>(name, shortNames: [shortName]);
+    //public ushort[] GetUInt16s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<ushort[]>(name, aliases, shortNames);
 
-    //public uint[] GetUInt32s(ushort maxValues = ushort.MaxValue) => GetArgumentValues<uint>(maxValues).ToArray();
-    //public uint[] GetUInt32s(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<uint[]>(name, maxValues: maxValues);
-    //public uint[] GetUInt32s(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<uint[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public uint[] GetUInt32s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<uint[]>(name, aliases, shortNames, maxValues);
+    //public uint[] GetUInt32s(ushort maxValues) => GetArgumentValues<uint>(maxValues).ToArray();
+    //public uint[] GetUInt32s(string name) => GetNullableStructOptionValue<uint[]>(name);
+    //public uint[] GetUInt32s(string name, char shortName) => GetNullableStructOptionValue<uint[]>(name, shortNames: [shortName]);
+    //public uint[] GetUInt32s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<uint[]>(name, aliases, shortNames);
 
-    //public ulong[] GetUInt64s(ushort maxValues = ushort.MaxValue) => GetArgumentValues<ulong>(maxValues).ToArray();
-    //public ulong[] GetUInt64s(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<ulong[]>(name, maxValues: maxValues);
-    //public ulong[] GetUInt64s(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<ulong[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public ulong[] GetUInt64s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<ulong[]>(name, aliases, shortNames, maxValues);
+    //public ulong[] GetUInt64s(ushort maxValues) => GetArgumentValues<ulong>(maxValues).ToArray();
+    //public ulong[] GetUInt64s(string name) => GetNullableStructOptionValue<ulong[]>(name);
+    //public ulong[] GetUInt64s(string name, char shortName) => GetNullableStructOptionValue<ulong[]>(name, shortNames: [shortName]);
+    //public ulong[] GetUInt64s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<ulong[]>(name, aliases, shortNames);
 
-    private bool? GetBooleanOption(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = 1) =>
-        TryGetOptionValue<bool>(out var value, name, aliases, shortNames, maxValues) ? value : null;
+    private bool? GetBooleanOption(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) =>
+        TryGetOptionValue<bool>(out var value, name, aliases, shortNames) ? value : null;
 
-    private T? GetNullableStructOptionValue<T>(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = 1) where T : struct =>
-        TryGetOptionValue<Nullable<T>>(out var value, name, aliases, shortNames, maxValues) ? value : null;
+    private T? GetNullableStructOptionValue<T>(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) where T : struct =>
+        TryGetOptionValue<Nullable<T>>(out var value, name, aliases, shortNames) ? value : null;
 
-    private T? GetNullableReferenceOptionValue<T>(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = 1) where T : class =>
-        TryGetOptionValue<T>(out var value, name, aliases, shortNames, maxValues) ? value : null;
+    private T? GetNullableReferenceOptionValue<T>(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) where T : class =>
+        TryGetOptionValue<T>(out var value, name, aliases, shortNames) ? value : null;
 
-    private bool TryGetOptionValue<T>(out T? value, string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = 1)
+    private bool TryGetOptionValue<T>(out T? value, string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null)
     {
         if (_argCounter.Count > 0)
         {
@@ -227,8 +227,8 @@ public struct CliParseResult
             return TryGetResultValue<T>(out value, optionT);
         }
 
-        AddOption<T>(name, aliases, shortNames, maxValues);
-        return TryGetOptionValue<T>(out value, name, aliases, shortNames, maxValues);
+        AddOption<T>(name, aliases, shortNames);
+        return TryGetOptionValue<T>(out value, name, aliases, shortNames);
     }
 
     private T? GetNullableReferenceArgumentValue<T>() where T : class => TryGetArgumentValue<T>(out var value) ? value : null;
@@ -251,7 +251,7 @@ public struct CliParseResult
         return success;
     }
 
-    private void AddOption<T>(string name, IEnumerable<string>? aliases, IEnumerable<char>? shortNames, ushort maxValues)
+    private void AddOption<T>(string name, IEnumerable<string>? aliases, IEnumerable<char>? shortNames)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
@@ -265,7 +265,6 @@ public struct CliParseResult
             ];
 
         Option<T> option = new(allAliases);
-        option.Arity = maxValues > 1 ? option.Arity = new(1, maxValues) : ArgumentArity.ZeroOrOne;
 
         _options.Add(name, option);
         _rootCommand.AddOption(option);

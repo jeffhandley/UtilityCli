@@ -11,13 +11,15 @@ public class GetBytes
 
     private const string ValueString1 = "2";
     private const string ValueString2 = "3";
+    private const string ValueString3 = "4";
     private const byte Value1 = 2;
     private const byte Value2 = 3;
+    private const byte Value3 = 4;
 
     [Theory]
     [MemberData(nameof(TestData.Option_Unspecified), Name, ShortNameInferred, null, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, ValueString1, new byte[] { Value1 }, MemberType = typeof(TestData))]
-    [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, Value1, Value2, MemberType = typeof(TestData))]
+    [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, ValueString3, Value1, Value2, Value3, MemberType = typeof(TestData))]
     public void GetBytes_Name(string[] args, byte[]? expected)
     {
         var cli = UtilityCli.CliParser.Parse(args);
@@ -29,7 +31,7 @@ public class GetBytes
     [Theory]
     [MemberData(nameof(TestData.Option_Unspecified), Name, ShortNameInferred, null, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, ValueString1, new byte[] { Value1 }, MemberType = typeof(TestData))]
-    [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, Value1, Value2, MemberType = typeof(TestData))]
+    [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, ValueString3, Value1, Value2, Value3, MemberType = typeof(TestData))]
     public void GetBytes_Name_ShortName(string[] args, byte[]? expected)
     {
         var cli = Parse(args);
@@ -41,7 +43,7 @@ public class GetBytes
     [Theory]
     [MemberData(nameof(TestData.Option_Unspecified), Name, ShortNameInferred, null, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, ValueString1, new byte[] { Value1 }, MemberType = typeof(TestData))]
-    [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, Value1, Value2, MemberType = typeof(TestData))]
+    [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, ValueString3, Value1, Value2, Value3, MemberType = typeof(TestData))]
     public void GetBytes_Name_ShortNames(string[] args, byte[]? expected)
     {
         var cli = Parse(args);
@@ -54,7 +56,7 @@ public class GetBytes
     [MemberData(nameof(TestData.Option_Unspecified), Name, ShortNameInferred, null, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, ValueString1, new byte[] { Value1 }, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Alias, ShortNameInferred, ValueString1, new byte[] { Value1 }, MemberType = typeof(TestData))]
-    [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, Value1, Value2, MemberType = typeof(TestData))]
+    [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, ValueString3, Value1, Value2, Value3, MemberType = typeof(TestData))]
     public void GetBytes_Name_Aliases(string[] args, byte[]? expected)
     {
         var cli = Parse(args);
@@ -67,7 +69,7 @@ public class GetBytes
     [MemberData(nameof(TestData.Option_Unspecified), Name, ShortNameInferred, null, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, ValueString1, new byte[] { Value1 }, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Alias, ShortNameInferred, ValueString1, new byte[] { Value1 }, MemberType = typeof(TestData))]
-    [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, Value1, Value2, MemberType = typeof(TestData))]
+    [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, ValueString3, Value1, Value2, Value3, MemberType = typeof(TestData))]
     public void GetBytes_Name_Aliases_ShortNames(string[] args, byte[]? expected)
     {
         var cli = Parse(args);
