@@ -18,30 +18,30 @@
     "--uint64", "10",
     "string-value",
     "11",
-    "--byteArray", "12", "--byteArray", "13", "--byteArray", "14",
+    "--byte-array", "12", "--byte-array", "13", "--byte-array", "14",
 ]);
 
-byte? byte_ = cli.GetByte("byte");
-char? char_ = cli.GetChar("char");
-DateTime? datetime_ = cli.GetDateTime("datetime");
-DateTimeOffset? datetimeoffset_ = cli.GetDateTimeOffset("datetimeoffset");
-decimal? decimal_ = cli.GetDecimal("decimal");
-double? double_ = cli.GetDouble("double");
-Guid? guid_ = cli.GetGuid("guid");
-bool? boolean_ = cli.GetBoolean("boolean");
-short? int16_ = cli.GetInt16("int16");
-int? int32_ = cli.GetInt32("int32");
-long? int64_ = cli.GetInt64("int64");
-sbyte? sbyte_ = cli.GetSByte("sbyte");
-float? single_ = cli.GetSingle("single");
-string? string_ = cli.GetString("string");
-ushort? uint16_ = cli.GetUInt16("uint16");
-uint? uint32_ = cli.GetUInt32("uint32");
-ulong? uint64_ = cli.GetUInt64("uint64");
-byte[]? byteArray_ = cli.GetBytes("byteArray");
+var byte_ = cli.GetByte("byte");
+var char_ = cli.GetChar("char");
+var datetime_ = cli.GetDateTime("datetime");
+var datetimeoffset_ = cli.GetDateTimeOffset("datetimeoffset");
+var decimal_ = cli.GetDecimal("decimal");
+var double_ = cli.GetDouble("double");
+var guid_ = cli.GetGuid("guid");
+var boolean_ = cli.GetBoolean("boolean");
+var int16_ = cli.GetInt16("int16");
+var int32_ = cli.GetInt32("int32");
+var int64_ = cli.GetInt64("int64");
+var sbyte_ = cli.GetSByte("sbyte");
+var single_ = cli.GetSingle("single");
+var string_ = cli.GetString("string");
+var uint16_ = cli.GetUInt16("uint16");
+var uint32_ = cli.GetUInt32("uint32");
+var uint64_ = cli.GetUInt64("uint64");
+var byteArray_ = cli.GetBytes("byteArray");
 
-string? arg0_string = cli.GetString();
-byte? arg1_byte = cli.GetByte();
+var arg0_string = cli.GetString();
+var arg1_byte = cli.GetByte();
 
 Console.WriteLine($"byte: {byte_}");
 Console.WriteLine($"char: {char_}");
@@ -62,4 +62,4 @@ Console.WriteLine($"uint32: {uint32_}");
 Console.WriteLine($"uint64: {uint64_}");
 Console.WriteLine($"arg0_string: {arg0_string}");
 Console.WriteLine($"arg1_byte: {arg1_byte}");
-Console.WriteLine($"byteArray: {string.Join(", ", byteArray_ ?? [])}");
+Console.WriteLine($"byte-array: {string.Join(", ", byteArray_ ?? [])}");
