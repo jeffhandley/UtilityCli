@@ -1,4 +1,4 @@
-﻿var cli = UtilityCliParser.CliParser.Parse([
+﻿var cli = UtilityCli.CliParser.Parse([
     "--byte", "0",
     "--char", "c",
     "--datetime", "2023-12-12",

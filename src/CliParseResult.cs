@@ -1,6 +1,6 @@
 ﻿using System.CommandLine;
 
-namespace UtilityCliParser;
+namespace UtilityCli;
 
 public struct CliParseResult
 {

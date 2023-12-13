@@ -1,5 +1,5 @@
-using static UtilityCliParser.CliParser;
-namespace UtilityCliParser.Test.OptionValues;
+using static UtilityCli.CliParser;
+namespace UtilityCli.Test.OptionValues;
 
 public class GetSingle
 {
@@ -17,7 +17,7 @@ public class GetSingle
     [MemberData(nameof(TestData.GetTestValues_Specified), Name, ShortNameInferred, ValueString, Value, MemberType = typeof(TestData))]
     public void GetSingle_Name(string[] args, object expected)
     {
-        var cli = UtilityCliParser.CliParser.Parse(args);
+        var cli = UtilityCli.CliParser.Parse(args);
         float? actual = cli.GetSingle(Name);
 
         Assert.Equal(expected, actual);

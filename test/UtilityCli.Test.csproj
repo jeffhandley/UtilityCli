@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\UtilityCliParser.csproj" />
+    <ProjectReference Include="..\src\UtilityCli.csproj" />
   </ItemGroup>
 
 </Project>

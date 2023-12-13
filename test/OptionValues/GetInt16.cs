@@ -1,5 +1,5 @@
-using static UtilityCliParser.CliParser;
-namespace UtilityCliParser.Test.OptionValues;
+using static UtilityCli.CliParser;
+namespace UtilityCli.Test.OptionValues;
 
 public class GetInt16
 {
@@ -17,7 +17,7 @@ public class GetInt16
     [MemberData(nameof(TestData.GetTestValues_Specified), Name, ShortNameInferred, ValueString, Value, MemberType = typeof(TestData))]
     public void GetInt16_Name(string[] args, object expected)
     {
-        var cli = UtilityCliParser.CliParser.Parse(args);
+        var cli = UtilityCli.CliParser.Parse(args);
         short? actual = cli.GetInt16(Name);
 
         Assert.Equal(expected, actual);

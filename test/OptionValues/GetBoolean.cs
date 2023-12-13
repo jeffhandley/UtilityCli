@@ -1,5 +1,5 @@
-using static UtilityCliParser.CliParser;
-namespace UtilityCliParser.Test.OptionValues;
+using static UtilityCli.CliParser;
+namespace UtilityCli.Test.OptionValues;
 
 public class GetBoolean
 {

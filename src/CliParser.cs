@@ -1,4 +1,4 @@
-﻿namespace UtilityCliParser;
+﻿namespace UtilityCli;
 
 public static class CliParser
 {

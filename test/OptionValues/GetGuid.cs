@@ -1,5 +1,5 @@
-using static UtilityCliParser.CliParser;
-namespace UtilityCliParser.Test.OptionValues;
+using static UtilityCli.CliParser;
+namespace UtilityCli.Test.OptionValues;
 
 public class GetGuid
 {
@@ -17,7 +17,7 @@ public class GetGuid
     [MemberData(nameof(TestData.GetTestValues_Specified), Name, ShortNameInferred, ValueString, Value, MemberType = typeof(TestData))]
     public void GetGuid_Name(string[] args, object expected)
     {
-        var cli = UtilityCliParser.CliParser.Parse(args);
+        var cli = UtilityCli.CliParser.Parse(args);
         Guid? actual = cli.GetGuid(Name);
 
         Assert.Equal(expected is not null && expected is string guid ? Guid.Parse(guid) : null, actual);

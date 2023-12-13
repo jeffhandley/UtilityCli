@@ -1,4 +1,4 @@
-namespace UtilityCliParser.Test.OptionValues;
+namespace UtilityCli.Test.OptionValues;
 
 public partial class TestData
 {
