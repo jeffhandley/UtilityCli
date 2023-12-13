@@ -18,7 +18,7 @@ public class SingleValue
 
     [Theory]
     [InlineData(new string[] { }, null)]
-    [InlineData(new string[] { "1" }, (byte)1)]
+    [InlineData(new string[] { "2" }, (byte)2)]
     public void GetByte(string[] args, byte? expected)
     {
         var cli = Parse(args);
@@ -40,7 +40,7 @@ public class SingleValue
 
     [Theory]
     [InlineData(new string[] { }, null)]
-    [InlineData(new string[] { "2023-12-12" }, "2023-12-12")]
+    [InlineData(new string[] { "2023-12-12T12:34:56" }, "2023-12-12T12:34:56")]
     public void GetDateTime(string[] args, string? expected)
     {
         var cli = Parse(args);
@@ -62,7 +62,7 @@ public class SingleValue
 
     [Theory]
     [InlineData(new string[] { }, null)]
-    [InlineData(new string[] { "1.0" }, 1.0d)]
+    [InlineData(new string[] { "2.0" }, 2.0d)]
     public void GetDecimal(string[] args, double? expected)
     {
         var cli = Parse(args);
@@ -73,7 +73,7 @@ public class SingleValue
 
     [Theory]
     [InlineData(new string[] { }, null)]
-    [InlineData(new string[] { "1.0" }, 1.0d)]
+    [InlineData(new string[] { "2.0" }, 2.0d)]
     public void GetDouble(string[] args, double? expected)
     {
         var cli = Parse(args);
@@ -96,7 +96,7 @@ public class SingleValue
 
     [Theory]
     [InlineData(new string[] { }, null)]
-    [InlineData(new string[] { "1" }, (short)1)]
+    [InlineData(new string[] { "2" }, (short)2)]
     public void GetInt16(string[] args, short? expected)
     {
         var cli = Parse(args);
@@ -107,7 +107,7 @@ public class SingleValue
 
     [Theory]
     [InlineData(new string[] { }, null)]
-    [InlineData(new string[] { "1" }, 1)]
+    [InlineData(new string[] { "2" }, 2)]
     public void GetInt32(string[] args, int? expected)
     {
         var cli = Parse(args);
@@ -118,7 +118,7 @@ public class SingleValue
 
     [Theory]
     [InlineData(new string[] { }, null)]
-    [InlineData(new string[] { "1" }, (long)1)]
+    [InlineData(new string[] { "2" }, (long)2)]
     public void GetInt64(string[] args, long? expected)
     {
         var cli = Parse(args);
@@ -129,7 +129,7 @@ public class SingleValue
 
     [Theory]
     [InlineData(new string[] { }, null)]
-    [InlineData(new string[] { "1.0" }, 1.0f)]
+    [InlineData(new string[] { "2.0" }, 2.0f)]
     public void GetSingle(string[] args, float? expected)
     {
         var cli = Parse(args);
@@ -140,7 +140,7 @@ public class SingleValue
 
     [Theory]
     [InlineData(new string[] { }, null)]
-    [InlineData(new string[] { "1" }, (sbyte)1)]
+    [InlineData(new string[] { "2" }, (sbyte)2)]
     public void GetSByte(string[] args, sbyte? expected)
     {
         var cli = Parse(args);
@@ -162,7 +162,7 @@ public class SingleValue
 
     [Theory]
     [InlineData(new string[] { }, null)]
-    [InlineData(new string[] { "1" }, (ushort)1)]
+    [InlineData(new string[] { "2" }, (ushort)2)]
     public void GetUInt16(string[] args, ushort? expected)
     {
         var cli = Parse(args);
@@ -173,7 +173,7 @@ public class SingleValue
 
     [Theory]
     [InlineData(new string[] { }, null)]
-    [InlineData(new string[] { "1" }, (uint)1)]
+    [InlineData(new string[] { "2" }, (uint)2)]
     public void GetUInt32(string[] args, uint? expected)
     {
         var cli = Parse(args);
@@ -184,7 +184,7 @@ public class SingleValue
 
     [Theory]
     [InlineData(new string[] { }, null)]
-    [InlineData(new string[] { "1" }, (ulong)1)]
+    [InlineData(new string[] { "2" }, (ulong)2)]
     public void GetUInt64(string[] args, ulong? expected)
     {
         var cli = Parse(args);

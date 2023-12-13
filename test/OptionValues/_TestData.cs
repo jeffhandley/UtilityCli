@@ -1,8 +1,10 @@
+using Newtonsoft.Json.Linq;
+
 namespace UtilityCli.Test.OptionValues;
 
 public partial class TestData
 {
-    public static IEnumerable<object?[]> GetTestValues_Unspecified(string name, char shortName, object value)
+    public static IEnumerable<object?[]> Option_Unspecified(string name, char shortName, object value)
     {
         // Not specified
         yield return [new string[] { }, value];
@@ -11,7 +13,7 @@ public partial class TestData
         yield return [new string[] { "--FOO", "--BAR" }, value];
     }
 
-    public static IEnumerable<object?[]> GetTestValues_PresentWithoutValue(string name, char shortName, object value)
+    public static IEnumerable<object?[]> Option_Flag(string name, char shortName, object value)
     {
         // Name
         yield return [new string[] { $"--{name}" }, value];
@@ -24,7 +26,7 @@ public partial class TestData
         yield return [new string[] { $"-{shortName}", "-F" }, value];
     }
 
-    public static IEnumerable<object?[]> GetTestValues_Specified(string name, char shortName, string valueString, object value)
+    public static IEnumerable<object?[]> Option_SingleValue(string name, char shortName, string valueString, object value)
     {
         // Before other arguments
         yield return [new string[] { $"--{name}", valueString, "FOO", "BAR" }, value];
@@ -55,6 +57,81 @@ public partial class TestData
 
         // In the middle of other arguments
         yield return [new string[] { "FOO", $"-{shortName}", valueString, "BAR" }, value];
+    }
 
+    public static IEnumerable<object?[]> Option_MultipleValues(string name, char shortName, string valueString1, string valueString2, object value1, object value2)
+    {
+        string[] args;
+
+        // Before other arguments
+        args = [$"--{name}", valueString1, $"--{name}", valueString2, "FOO", "BAR"];
+        yield return [args, new object[] { value1, value2 }];
+
+        // After other arguments
+        args = ["FOO", "BAR", $"--{name}", valueString1, $"--{name}", valueString2];
+        yield return [args, new object[] { value1, value2 }];
+
+        // Before and after other arguments
+        args = [$"--{name}", valueString1, "FOO", "BAR", $"--{name}", valueString2];
+        yield return [args, new object[] { value1, value2 }];
+
+        // Before other options
+        args = [$"--{name}", valueString1, $"--{name}", valueString2, "--FOO", "--BAR"];
+        yield return [args, new object[] { value1, value2 }];
+
+        // After other options
+        args = ["--FOO", "--BAR", $"--{name}", valueString1, $"--{name}", valueString2];
+        yield return [args, new object[] { value1, value2 }];
+
+        // Before and after other options
+        args = [$"--{name}", valueString1, "--FOO", "--BAR", $"--{name}", valueString2];
+        yield return [args, new object[] { value1, value2 }];
+        
+        // In the middle of other arguments
+        args = ["FOO", $"--{name}", valueString1, $"--{name}", valueString2, "BAR"];
+        yield return [args, new object[] { value1, value2 }];
+
+        // Before and in the middle of other arguments
+        args = [$"--{name}", valueString1, "FOO", $"--{name}", valueString2, "BAR"];
+        yield return [args, new object[] { value1, value2 }];
+
+        // After and in the middle of other arguments
+        args = ["FOO", $"--{name}", valueString1, "BAR", $"--{name}", valueString2];
+        
+        // Before other arguments
+        args = [$"-{shortName}", valueString1, $"--{name}", valueString2, "FOO", "BAR"];
+        yield return [args, new object[] { value1, value2 }];
+        
+        // After other arguments
+        args = ["FOO", "BAR", $"-{shortName}", valueString1, $"--{name}", valueString2];
+        yield return [args, new object[] { value1, value2 }];
+
+        // Before and after other arguments
+        args = [$"-{shortName}", valueString1, "FOO", "BAR", $"--{name}", valueString2];
+        yield return [args, new object[] { value1, value2 }];
+        
+        // Before other options
+        args = [$"-{shortName}", valueString1, $"--{name}", valueString2, "--FOO", "--BAR"];
+        yield return [args, new object[] { value1, value2 }];
+        
+        // After other options
+        args = ["--FOO", "--BAR", $"-{shortName}", valueString1, $"--{name}", valueString2];
+        yield return [args, new object[] { value1, value2 }];
+
+        // Before and after other options
+        args = [$"-{shortName}", valueString1, "--FOO", "--BAR", $"--{name}", valueString2];
+        yield return [args, new object[] { value1, value2 }];
+        
+        // In the middle of other arguments
+        args = ["FOO", $"-{shortName}", valueString1, $"--{name}", valueString2, "BAR"];
+        yield return [args, new object[] { value1, value2 }];
+
+        // Before and in the middle of other arguments
+        args = [$"-{shortName}", valueString1, "FOO", $"--{name}", valueString2, "BAR"];
+        yield return [args, new object[] { value1, value2 }];
+
+        // After and in the middle of other arguments
+        args = ["FOO", $"-{shortName}", valueString1, "BAR", $"--{name}", valueString2];
+        yield return [args, new object[] { value1, value2 }];
     }
 }

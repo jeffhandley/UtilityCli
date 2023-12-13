@@ -10,6 +10,7 @@ public struct CliParseResult
     private readonly RootCommand _rootCommand = new() { TreatUnmatchedTokensAsErrors = false };
     private readonly Dictionary<string, Command> _commands = [];
     private readonly Dictionary<string, Option> _options = [];
+    private readonly List<char> _shortNamesUsed = [];
     private readonly Dictionary<string, ushort> _argCounter = [];
 
     private System.CommandLine.Parsing.Parser _parser = new();
@@ -121,9 +122,9 @@ public struct CliParseResult
     //public bool[] GetBooleans(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<bool[]>(name, aliases, shortNames, maxValues);
 
     //public byte[] GetBytes(ushort maxValues = ushort.MaxValue) => GetArgumentValues<byte>(maxValues).ToArray();
-    //public byte[] GetBytes(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<byte[]>(name, maxValues: maxValues);
-    //public byte[] GetBytes(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<byte[]>(name, shortNames: [shortName], maxValues: maxValues);
-    //public byte[] GetBytes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<byte[]>(name, aliases, shortNames, maxValues);
+    public byte[]? GetBytes(string name, ushort maxValues) => GetNullableReferenceOptionValue<byte[]>(name, maxValues: maxValues);
+    public byte[]? GetBytes(string name, char shortName, ushort maxValues = ushort.MaxValue) => GetNullableReferenceOptionValue<byte[]>(name, shortNames: [shortName], maxValues: maxValues);
+    public byte[]? GetBytes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = ushort.MaxValue) => GetNullableReferenceOptionValue<byte[]>(name, aliases, shortNames, maxValues);
 
     //public short[] GetInt16s(ushort maxValues = ushort.MaxValue) => GetArgumentValues<short>(maxValues).ToArray();
     //public short[] GetInt16s(string name, ushort maxValues = ushort.MaxValue) => GetNullableStructOptionValue<short[]>(name, maxValues: maxValues);
@@ -211,7 +212,7 @@ public struct CliParseResult
 
     private bool TryGetOptionValue<T>(out T? value, string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null, ushort maxValues = 1)
     {
-        if (_argCounter.Any())
+        if (_argCounter.Count > 0)
         {
             throw new InvalidOperationException("Named option values must be used before unnamed argument values. Otherwise, the named options and their values could be returned as argument values.");
         }
@@ -254,10 +255,13 @@ public struct CliParseResult
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
+        shortNames ??= _shortNamesUsed.Contains(name[0]) ?[] : [name[0]];
+        _shortNamesUsed.AddRange(shortNames);
+
         string[] allAliases = [
             $"--{name}",
             .. aliases?.Select(a => $"--{a}") ?? [],
-            .. (shortNames ?? [name[0]]).Select(a => $"-{a}")
+            .. shortNames.Select(a => $"-{a}")
             ];
 
         Option<T> option = new(allAliases);
