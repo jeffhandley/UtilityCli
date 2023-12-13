@@ -91,7 +91,6 @@ public class SingleValue
         Guid? actual = cli.GetGuid();
 
         Assert.Equal(expected is not null && expected is string guid ? Guid.Parse(guid) : null, actual);
-
     }
 
     [Theory]
