@@ -10,7 +10,7 @@ public class GetString
     private const char ShortNameOverride = 'c';
 
     private const string ValueString = "value";
-    private const string Value = "value";
+    private const string Value = ValueString;
 
     [Theory]
     [MemberData(nameof(TestData.Option_Unspecified), Name, ShortNameInferred, null, MemberType = typeof(TestData))]

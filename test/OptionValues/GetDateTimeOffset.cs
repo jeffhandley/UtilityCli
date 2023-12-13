@@ -9,7 +9,7 @@ public class GetDateTimeOffset
     private const char ShortNameInferred = 'd';
     private const char ShortNameOverride = 'o';
 
-    private const string ValueString = "2023-12-12";
+    private const string ValueString = "2023-12-12T12:34:56";
     private const string Value = ValueString;
 
     [Theory]

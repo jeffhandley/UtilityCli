@@ -3,11 +3,11 @@ namespace UtilityCli.Test.OptionValues;
 
 public class GetGuid
 {
-    private const string Name = "datetime";
-    private const string Alias = "calendar";
+    private const string Name = "guid";
+    private const string Alias = "uuid";
 
-    private const char ShortNameInferred = 'd';
-    private const char ShortNameOverride = 'c';
+    private const char ShortNameInferred = 'g';
+    private const char ShortNameOverride = 'u';
 
     private const string ValueString = "D4F230DF-E481-4049-B797-AAD0F7F0B736";
     private const string Value = ValueString;
