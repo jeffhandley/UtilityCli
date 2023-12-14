@@ -1,4 +1,4 @@
-using static UtilityCli.CliParser;
+using static UtilityCli.CliArgs;
 namespace UtilityCli.Test.OptionValues;
 
 public class GetDateTime
@@ -17,7 +17,7 @@ public class GetDateTime
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, ValueString, Value, MemberType = typeof(TestData))]
     public void GetDateTime_Name(string[] args, object expected)
     {
-        var cli = UtilityCli.CliParser.Parse(args);
+        var cli = UtilityCli.CliArgs.Parse(args);
         DateTime? actual = cli.GetDateTime(Name);
 
         Assert.Equal(expected is not null ? Convert.ToDateTime(expected) : null, actual);

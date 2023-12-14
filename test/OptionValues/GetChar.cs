@@ -1,4 +1,4 @@
-using static UtilityCli.CliParser;
+using static UtilityCli.CliArgs;
 namespace UtilityCli.Test.OptionValues;
 
 public class GetChar
@@ -17,7 +17,7 @@ public class GetChar
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, ValueString, Value, MemberType = typeof(TestData))]
     public void GetChar_Name(string[] args, object expected)
     {
-        var cli = UtilityCli.CliParser.Parse(args);
+        var cli = UtilityCli.CliArgs.Parse(args);
         char? actual = cli.GetChar(Name);
 
         Assert.Equal(expected, actual);

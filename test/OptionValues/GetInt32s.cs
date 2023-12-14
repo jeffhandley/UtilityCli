@@ -1,4 +1,4 @@
-using static UtilityCli.CliParser;
+using static UtilityCli.CliArgs;
 namespace UtilityCli.Test.OptionValues;
 
 public class GetInt32s
@@ -22,7 +22,7 @@ public class GetInt32s
     [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, ValueString3, Value1, Value2, Value3, MemberType = typeof(TestData))]
     public void GetInt32s_Name(string[] args, int[]? expected)
     {
-        var cli = UtilityCli.CliParser.Parse(args);
+        var cli = UtilityCli.CliArgs.Parse(args);
         int[]? actual = cli.GetInt32s(Name);
 
         Assert.Equal(expected, actual);

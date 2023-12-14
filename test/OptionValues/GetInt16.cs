@@ -1,4 +1,4 @@
-using static UtilityCli.CliParser;
+using static UtilityCli.CliArgs;
 namespace UtilityCli.Test.OptionValues;
 
 public class GetInt16
@@ -17,7 +17,7 @@ public class GetInt16
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, ValueString, Value, MemberType = typeof(TestData))]
     public void GetInt16_Name(string[] args, object expected)
     {
-        var cli = UtilityCli.CliParser.Parse(args);
+        var cli = UtilityCli.CliArgs.Parse(args);
         short? actual = cli.GetInt16(Name);
 
         Assert.Equal(expected, actual);

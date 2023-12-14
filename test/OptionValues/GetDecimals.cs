@@ -1,4 +1,4 @@
-using static UtilityCli.CliParser;
+using static UtilityCli.CliArgs;
 namespace UtilityCli.Test.OptionValues;
 
 public class GetDecimals
@@ -22,7 +22,7 @@ public class GetDecimals
     [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, ValueString3, Value1, Value2, Value3, MemberType = typeof(TestData))]
     public void GetDecimals_Name(string[] args, double[]? expected)
     {
-        var cli = UtilityCli.CliParser.Parse(args);
+        var cli = UtilityCli.CliArgs.Parse(args);
         decimal[]? actual = cli.GetDecimals(Name);
 
         Assert.Equal(expected?.Select(Convert.ToDecimal)!, actual!);

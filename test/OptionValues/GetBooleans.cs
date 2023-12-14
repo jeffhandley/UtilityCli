@@ -1,4 +1,4 @@
-using static UtilityCli.CliParser;
+using static UtilityCli.CliArgs;
 namespace UtilityCli.Test.OptionValues;
 
 public class GetBooleans
@@ -22,7 +22,7 @@ public class GetBooleans
     [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, ValueString3, Value1, Value2, Value3, MemberType = typeof(TestData))]
     public void GetBooleans_Name(string[] args, bool[]? expected)
     {
-        var cli = UtilityCli.CliParser.Parse(args);
+        var cli = UtilityCli.CliArgs.Parse(args);
         bool[]? actual = cli.GetBooleans(Name);
 
         Assert.Equal(expected, actual);

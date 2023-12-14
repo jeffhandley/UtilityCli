@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using static UtilityCli.CliParser;
+using static UtilityCli.CliArgs;
 namespace UtilityCli.Test.ArgumentValues;
 
 public class SingleValue_Invalid

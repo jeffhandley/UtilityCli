@@ -1,4 +1,4 @@
-using static UtilityCli.CliParser;
+using static UtilityCli.CliArgs;
 namespace UtilityCli.Test.OptionValues;
 
 public class GetDateTimeOffset
@@ -17,7 +17,7 @@ public class GetDateTimeOffset
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, ValueString, Value, MemberType = typeof(TestData))]
     public void GetDateTimeOffset_Name(string[] args, object expected)
     {
-        var cli = UtilityCli.CliParser.Parse(args);
+        var cli = UtilityCli.CliArgs.Parse(args);
         DateTimeOffset? actual = cli.GetDateTimeOffset(Name);
 
         Assert.Equal(expected is not null ? new DateTimeOffset(Convert.ToDateTime(expected)) : null, actual);

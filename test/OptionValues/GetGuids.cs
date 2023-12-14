@@ -1,4 +1,4 @@
-using static UtilityCli.CliParser;
+using static UtilityCli.CliArgs;
 namespace UtilityCli.Test.OptionValues;
 
 public class GetGuids
@@ -22,7 +22,7 @@ public class GetGuids
     [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, ValueString3, Value1, Value2, Value3, MemberType = typeof(TestData))]
     public void GetGuids_Name(string[] args, string[]? expected)
     {
-        var cli = UtilityCli.CliParser.Parse(args);
+        var cli = UtilityCli.CliArgs.Parse(args);
         Guid[]? actual = cli.GetGuids(Name);
 
         Assert.Equal(expected?.Select(expected => Guid.Parse(expected))!, actual!);

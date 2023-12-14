@@ -1,4 +1,4 @@
-using static UtilityCli.CliParser;
+using static UtilityCli.CliArgs;
 namespace UtilityCli.Test.OptionValues;
 
 public class GetDateTimeOffsets
@@ -19,7 +19,7 @@ public class GetDateTimeOffsets
     [MemberData(nameof(TestData.Option_MultipleValues), Name, ShortNameInferred, ValueString1, ValueString2, ValueString3, ValueString1, ValueString2, ValueString3, MemberType = typeof(TestData))]
     public void GetDateTimeOffsets_Name(string[] args, string[]? expected)
     {
-        var cli = UtilityCli.CliParser.Parse(args);
+        var cli = UtilityCli.CliArgs.Parse(args);
         DateTimeOffset[]? actual = cli.GetDateTimeOffsets(Name);
 
         Assert.Equal(expected is not null ? expected.Select(s => new DateTimeOffset(Convert.ToDateTime(s))) : null!, actual!);
