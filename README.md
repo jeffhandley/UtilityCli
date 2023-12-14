@@ -2,7 +2,7 @@
 
 ## Quickly build utility applications that parse the command-line
 
-UtilityCli is built for simple utility console application scenarios. As a wrapper around [System.CommandLine](https://nuget.org/packages/System.CommandLine), UtilityCli provides easy support extracting commands, options, and arguments off the command-line without requiring those elements to be modeled up-front.
+UtilityCli is built for simple utility console application scenarios. As a wrapper around System.CommandLine, UtilityCli provides simple APIs for extracting strongly-typed options and arguments from the command line args. UtilityCli does not require the CLI to be defined/modeled up-front. Instead, the model is progressively defined while extracting the option and argument values.
 
 Working in happy-path scenarios, UtilityCli allows you to simply call `Parse(args)` in your console application and then extract elements into strongly-typed values. UtilityCli applies some opinionated formatting to your command-line to achieve an easy-to-use API.
 
