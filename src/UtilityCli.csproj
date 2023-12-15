@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>A command-line parser for simple utility applications</Title>
-    <Version>0.1.2-preview</Version>
+    <Version>0.1.3-preview</Version>
     <Authors>jeffhandley</Authors>
     <PackageProjectUrl>https://github.com/jeffhandley/UtilityCli</PackageProjectUrl>
     <Description>UtilityCli is built for simple utility console application scenarios. As a wrapper around System.CommandLine, UtilityCli provides simple APIs for extracting strongly-typed options and arguments from the command line args. UtilityCli does not require the CLI to be defined/modeled up-front. Instead, the model is progressively defined while extracting the option and argument values.</Description>
