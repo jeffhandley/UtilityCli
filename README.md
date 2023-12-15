@@ -7,29 +7,24 @@ UtilityCli is built for simple utility console application scenarios. As a wrapp
 ```csharp
 using UtilityCli;
 
-// --org dotnet --repo runtime --issue 40074 area-System.Security untriaged --dry-run
-CliParseResult cli = CliArgs.Parse(args);
-string org = cli.GetString("org") ?? throw new ArgumentNullException("org");
-string repo = cli.GetString("repo") ?? throw new ArgumentNullException("repo"); ;
-int? issue = cli.GetInt32("issue");
-int? pr = cli.GetInt32("pr");
-bool dryRun = cli.HasFlag("dry-run");
-string[] labels = cli.GetStrings() ?? [];
+// --org dotnet --repo runtime area-System.Security untriaged --dry-run --issue 40075 --pr 40075
+string org = cli.GetRequiredString("org", aliases: ["owner"]);
+string repo = cli.GetRequiredString("repo");
+int[]? issues = cli.GetInt32s("issue");
+int[]? prs = cli.GetInt32s("pr");
+bool dryRun = cli.HasFlag("dry-run", shortNames: null);
+string[] labels = cli.GetRequiredStrings();
 
-if (labels.Length == 0) throw new ArgumentNullException("labels");
-
-if (issue is not null)
+foreach (int issue in issues ?? [])
 {
     Console.WriteLine($"Add labels to {org}/{repo}#{issue} (issue): {string.Join(", ", labels)}");
 }
-else if (pr is not null)
+
+foreach (int pr in prs ?? [])
 {
-    Console.WriteLine($"Add labels to {org}/{repo}#{issue} (PR): {string.Join(", ", labels)}");
+    Console.WriteLine($"Add labels to {org}/{repo}#{pr} (PR): {string.Join(", ", labels)}");
 }
-else
-{
-    throw new ArgumentNullException("issue or pr");
-}
+
 ```
 
 ## Approachable, easy, opinionated
