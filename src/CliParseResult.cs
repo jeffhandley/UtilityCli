@@ -1,19 +1,17 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace UtilityCli;
 
 public partial struct CliParseResult
 {
     private readonly IReadOnlyList<string> _args;
-    private readonly RootCommand _rootCommand = new() { TreatUnmatchedTokensAsErrors = false };
-    private readonly Dictionary<string, Command> _commands = [];
     private readonly Dictionary<string, Option> _options = [];
+    private readonly List<Argument> _arguments = [];
     private readonly List<char> _shortNamesUsed = [];
     private readonly Dictionary<string, ushort> _argCounter = [];
-
-    private System.CommandLine.Parsing.Parser _parser = new();
 
     public CliParseResult() => throw new ArgumentNullException("args");
 
@@ -52,6 +50,9 @@ public partial struct CliParseResult
             throw new InvalidOperationException("Named option values must be used before unnamed argument values. Otherwise, the named options and their values could be returned as argument values.");
         }
 
+        // Infer the first character as a short name if it is not already used
+        shortNames ??= (_shortNamesUsed.Contains(name[0]) ? [] : [name[0]]);
+
         if (_options.TryGetValue(name, out var option))
         {
             if (option is not Option<T> optionT)
@@ -59,21 +60,76 @@ public partial struct CliParseResult
                 throw new InvalidCastException($"Option '{name}' is not defined as type '{typeof(T).Name}'.");
             }
 
-            return TryGetResultValue<T>(out value, optionT);
+            var success = TryGetResultValue<T>(BuildParser(), optionT, out value, out var unmatchedTokens);
+
+            // If the option was not found but it has a shortname and there are unmatched tokens,
+            // it's possible that the option is bundled with other short names that haven't yet been defined as options.
+            if (!success && shortNames.Any() && unmatchedTokens.Any())
+            {
+                success = TryGetOptionValueFromUnmatchedBundles(ref value, shortNames, optionT, unmatchedTokens);
+            }
+
+            return success;
         }
 
-        AddOption<T>(name, aliases, shortNames);
+        option = BuildOption<T>(name, aliases ?? [], shortNames);
+        _options.Add(name, option);
+        _shortNamesUsed.AddRange(shortNames);
+
         return TryGetOptionValue<T>(out value, name, aliases, shortNames);
+    }
+
+    private bool TryGetOptionValueFromUnmatchedBundles<T>(ref T? value, IEnumerable<char> shortNames, Option<T> optionT, IEnumerable<string> unmatchedTokens)
+    {
+        // If the option was not found, but one of its short names is part of a bundle of short names,
+        // try adding the other short names as options and see if the option value can be parsed.
+        // Capture the original args (for use in lambda)
+        var originalArgs = _args;
+
+        // Unmatched bundles are unmatched tokens that start with a hyphen and contain more than one character
+        var unmatchedBundles = unmatchedTokens.Where(t => BundlePattern().IsMatch(t)).Select(t => t[1..]);
+
+        // Partially matched bundles are unmatched tokens that do not start with a hyphen and do not match any of the original arguments
+        // These have already been unbundled with some short names matched and removed already (along with the hyphen)
+        var partiallyMatchedBundles = unmatchedTokens.Where(t => !BundlePattern().IsMatch(t) && !originalArgs.Contains(t));
+
+        foreach (var bundle in unmatchedBundles.Concat(partiallyMatchedBundles))
+        {
+            var index = bundle.IndexOfAny(shortNames.ToArray());
+
+            if (index >= 0)
+            {
+                var otherFlags = bundle[..index] + bundle[(index + 1)..];
+                List<Option> stubOptions = [];
+
+                // Add stub options for each short name not already defined as an option
+                foreach (var flag in otherFlags.Except(_shortNamesUsed))
+                {
+                    stubOptions.Add(BuildOption<T>(flag.ToString(), [], [flag]));
+                }
+
+                return TryGetResultValue<T>(BuildParser(stubOptions), optionT, out value, out _);
+            }
+        }
+
+        return false;
     }
 
     private T? GetNullableReferenceArgumentValue<T>() where T : class => TryGetArgumentValue<T>(out var value) ? value : null;
     private T? GetNullableStructArgumentValue<T>() where T : struct => TryGetArgumentValue<T>(out var value) ? value : null;
 
-    private bool TryGetArgumentValue<T>(out T? value) => TryGetResultValue(out value, AddArgument<T>());
-
-    private readonly bool TryGetResultValue<T>(out T? value, Symbol symbol)
+    private bool TryGetArgumentValue<T>(out T? value)
     {
-        var result = _parser.Parse(_args);
+        var argument = BuildArgument<T>();
+        _arguments.Add(argument);
+
+        return TryGetResultValue(BuildParser(), argument, out value, out _);
+    }
+
+    [SuppressMessage("Style", "IDE0251:Make member 'readonly'", Justification = "Reserving the opportunity to have a stateful root command or parser")]
+    private bool TryGetResultValue<T>(Parser parser, Symbol symbol, out T? value, out IEnumerable<string> unmatchedTokens)
+    {
+        var result = parser.Parse(_args);
         var symbolResult = result.FindResultFor(symbol);
 
         (value, bool success) = (symbol, symbolResult) switch
@@ -83,30 +139,26 @@ public partial struct CliParseResult
             _ => (default, false),
         };
 
+        unmatchedTokens = result.UnmatchedTokens;
         return success;
     }
 
-    private void AddOption<T>(string name, IEnumerable<string>? aliases, IEnumerable<char>? shortNames)
+    private readonly Option<T> BuildOption<T>(string name, IEnumerable<string> aliases, IEnumerable<char> shortNames)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
-
-        shortNames ??= _shortNamesUsed.Contains(name[0]) ?[] : [name[0]];
-        _shortNamesUsed.AddRange(shortNames);
+        ArgumentNullException.ThrowIfNull(aliases);
+        ArgumentNullException.ThrowIfNull(shortNames);
 
         string[] allAliases = [
             $"--{name}",
-            .. aliases?.Select(a => $"--{a}") ?? [],
+            .. aliases.Select(a => $"--{a}"),
             .. shortNames.Select(a => $"-{a}")
             ];
 
-        Option<T> option = new(allAliases);
-
-        _options.Add(name, option);
-        _rootCommand.AddOption(option);
-        _parser = new(new CommandLineConfiguration(_rootCommand, enablePosixBundling: false));
+        return new(allAliases);
     }
 
-    private Argument<T> AddArgument<T>()
+    private readonly Argument<T> BuildArgument<T>()
     {
         string argName = typeof(T).Name.ToLower();
         ushort argCount = _argCounter.TryGetValue(argName, out var count) ? (ushort)(count + 1) : (ushort)1;
@@ -117,16 +169,37 @@ public partial struct CliParseResult
             argName = $"{argName}_{argCount}";
         }
 
-        var argument = new Argument<T>(argName);
-        _rootCommand.AddArgument(argument);
+        return new(argName);
+    }
 
-        foreach (var command in _rootCommand.Children.OfType<Command>())
+    [SuppressMessage("Style", "IDE0251:Make member 'readonly'", Justification = "Reserving the opportunity to have a stateful root command or parser")]
+    private Parser BuildParser(IEnumerable<Option>? stubOptions = null)
+    {
+        RootCommand rootCommand = new() { TreatUnmatchedTokensAsErrors = false };
+
+        foreach (var option in _options.Values.Concat(stubOptions ?? []))
         {
-            command.AddArgument(argument);
+            rootCommand.AddOption(option);
+
+            //foreach (var command in rootCommand.Children.OfType<Command>())
+            //{
+            //    command.AddOption(option);
+            //}
         }
 
-        _parser = new(_rootCommand);
+        foreach (var argument in _arguments)
+        {
+            rootCommand.AddArgument(argument);
 
-        return argument;
+            //foreach (var command in _rootCommand.Children.OfType<Command>())
+            //{
+            //    command.AddArgument(argument);
+            //}
+        }
+
+        return new(new CommandLineConfiguration(rootCommand, enablePosixBundling: true));
     }
+
+    [GeneratedRegex(@"^-\w+$")]
+    private static partial Regex BundlePattern();
 }

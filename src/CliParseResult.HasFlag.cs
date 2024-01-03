@@ -1,4 +1,4 @@
-﻿namespace UtilityCli;
+namespace UtilityCli;
 
 public partial struct CliParseResult
 {

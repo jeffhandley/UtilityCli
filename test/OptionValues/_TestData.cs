@@ -13,21 +13,56 @@ public partial class TestData
         yield return [new string[] { "--FOO", "--BAR" }, value];
     }
 
-    public static IEnumerable<object?[]> Option_Flag(string name, char shortName, object value)
+    public static IEnumerable<object?[]> Option_Flag(string name, char shortName)
     {
+        // Not specified
+        yield return [new string[] { }, null];
+
         // Name
-        yield return [new string[] { $"--{name}" }, value];
-        yield return [new string[] { $"--{name}", "--FOO" }, value];
-        yield return [new string[] { $"--{name}", "-F" }, value];
+        yield return [new string[] { $"--{name}" }, true];
+        yield return [new string[] { $"--{name}", "--FOO" }, true];
+        yield return [new string[] { $"--{name}", "-F" }, true];
 
         // Short Name
-        yield return [new string[] { $"-{shortName}" }, value];
-        yield return [new string[] { $"-{shortName}", "--FOO" }, value];
-        yield return [new string[] { $"-{shortName}", "-F" }, value];
+        yield return [new string[] { $"-{shortName}" }, true];
+        yield return [new string[] { $"-{shortName}", "--FOO" }, true];
+        yield return [new string[] { $"-{shortName}", "-F" }, true];
+
+        // Bundled Short Names
+        yield return [new string[] { $"-FB" }, null];
+        yield return [new string[] { $"-{shortName}FB" }, true];
+        yield return [new string[] { $"-F{shortName}B" }, true];
+        yield return [new string[] { $"-FB{shortName}" }, true];
+        yield return [new string[] { $"-{shortName}FB", "-QUX" }, true];
+        yield return [new string[] { $"-F{shortName}B", "-QUX" }, true];
+        yield return [new string[] { $"-FB{shortName}", "-QUX" }, true];
+
+        // Bundled Short Names with value (true)
+        yield return [new string[] { $"-FB", "true" }, null];
+        yield return [new string[] { $"-{shortName}FB", "true" }, true];
+        yield return [new string[] { $"-F{shortName}B", "true" }, true];
+        yield return [new string[] { $"-FB{shortName}", "true" }, true];
+        yield return [new string[] { $"-{shortName}FB", "-QUX", "true" }, true];
+        yield return [new string[] { $"-F{shortName}B", "-QUX", "true" }, true];
+        yield return [new string[] { $"-FB{shortName}", "-QUX", "true" }, true];
+
+        // Bundled Short Names with value (false)
+        // Only the last bundled short name gets the value applied to it
+        yield return [new string[] { $"-FB", "false" }, null];
+        yield return [new string[] { $"-{shortName}FB", "false" }, true];
+        yield return [new string[] { $"-F{shortName}B", "false" }, true];
+        yield return [new string[] { $"-FB{shortName}", "false" }, false];
+        yield return [new string[] { $"-{shortName}FB", "-QUX", "false" }, true];
+        yield return [new string[] { $"-F{shortName}B", "-QUX", "false" }, true];
+        yield return [new string[] { $"-FB{shortName}", "-QUX", "false" }, true];
     }
 
     public static IEnumerable<object?[]> Option_SingleValue(string name, char shortName, string valueString, object value)
     {
+        // Without other arguments
+        yield return [new string[] { $"--{name}", valueString }, value];
+        yield return [new string[] { $"-{shortName}", valueString }, value];
+
         // Before other arguments
         yield return [new string[] { $"--{name}", valueString, "FOO", "BAR" }, value];
 
