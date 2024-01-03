@@ -11,7 +11,7 @@ public class GetBoolean
 
     [Theory]
     [MemberData(nameof(TestData.Option_Unspecified), Name, ShortNameInferred, null, MemberType = typeof(TestData))]
-    [MemberData(nameof(TestData.Option_Flag), Name, ShortNameInferred, true, MemberType = typeof(TestData))]
+    [MemberData(nameof(TestData.Option_Flag), Name, ShortNameInferred, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, "true", true, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, "false", false, MemberType = typeof(TestData))]
     public void GetBoolean_Name(string[] args, bool? expected)
@@ -23,7 +23,7 @@ public class GetBoolean
 
     [Theory]
     [MemberData(nameof(TestData.Option_Unspecified), Name, ShortNameInferred, null, MemberType = typeof(TestData))]
-    [MemberData(nameof(TestData.Option_Flag), Name, ShortNameInferred, true, MemberType = typeof(TestData))]
+    [MemberData(nameof(TestData.Option_Flag), Name, ShortNameInferred, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, "true", true, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, "false", false, MemberType = typeof(TestData))]
     public void GetBoolean_Name_ShortName(string[] args, bool? expected)
@@ -36,7 +36,7 @@ public class GetBoolean
 
     [Theory]
     [MemberData(nameof(TestData.Option_Unspecified), Name, ShortNameInferred, null, MemberType = typeof(TestData))]
-    [MemberData(nameof(TestData.Option_Flag), Name, ShortNameInferred, true, MemberType = typeof(TestData))]
+    [MemberData(nameof(TestData.Option_Flag), Name, ShortNameInferred, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, "true", true, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, "false", false, MemberType = typeof(TestData))]
     public void GetBoolean_Name_ShortNames(string[] args, bool? expected)
@@ -49,7 +49,7 @@ public class GetBoolean
 
     [Theory]
     [MemberData(nameof(TestData.Option_Unspecified), Name, ShortNameInferred, null, MemberType = typeof(TestData))]
-    [MemberData(nameof(TestData.Option_Flag), Name, ShortNameInferred, true, MemberType = typeof(TestData))]
+    [MemberData(nameof(TestData.Option_Flag), Name, ShortNameInferred, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, "true", true, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, "false", false, MemberType = typeof(TestData))]
     public void GetBoolean_Name_Aliases(string[] args, bool? expected)
@@ -62,10 +62,10 @@ public class GetBoolean
 
     [Theory]
     [MemberData(nameof(TestData.Option_Unspecified), Name, ShortNameInferred, null, MemberType = typeof(TestData))]
-    [MemberData(nameof(TestData.Option_Flag), Name, ShortNameInferred, true, MemberType = typeof(TestData))]
+    [MemberData(nameof(TestData.Option_Flag), Name, ShortNameInferred, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, "true", true, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Name, ShortNameInferred, "false", false, MemberType = typeof(TestData))]
-    [MemberData(nameof(TestData.Option_Flag), Alias, ShortNameInferred, true, MemberType = typeof(TestData))]
+    [MemberData(nameof(TestData.Option_Flag), Alias, ShortNameInferred, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Alias, ShortNameInferred, "true", true, MemberType = typeof(TestData))]
     [MemberData(nameof(TestData.Option_SingleValue), Alias, ShortNameInferred, "false", false, MemberType = typeof(TestData))]
     public void GetBoolean_Name_Aliases_ShortNames(string[] args, bool? expected)

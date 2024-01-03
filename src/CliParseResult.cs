@@ -1,19 +1,17 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace UtilityCli;
 
-public struct CliParseResult
+public partial struct CliParseResult
 {
     private readonly IReadOnlyList<string> _args;
-    private readonly RootCommand _rootCommand = new() { TreatUnmatchedTokensAsErrors = false };
-    private readonly Dictionary<string, Command> _commands = [];
     private readonly Dictionary<string, Option> _options = [];
+    private readonly List<Argument> _arguments = [];
     private readonly List<char> _shortNamesUsed = [];
     private readonly Dictionary<string, ushort> _argCounter = [];
-
-    private System.CommandLine.Parsing.Parser _parser = new();
 
     public CliParseResult() => throw new ArgumentNullException("args");
 
@@ -21,355 +19,6 @@ public struct CliParseResult
     {
         _args = args.ToList();
     }
-
-    public bool HasFlag(string name) => GetBooleanOption(name) ?? false;
-    public bool HasFlag(string name, char shortName) => GetBooleanOption(name, shortNames: [shortName]) ?? false;
-    public bool HasFlag(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetBooleanOption(name, aliases, shortNames) ?? false;
-
-    public bool? GetBoolean() => GetNullableStructArgumentValue<bool>();
-    public bool? GetBoolean(string name) => GetBooleanOption(name);
-    public bool? GetBoolean(string name, char shortName) => GetBooleanOption(name, shortNames: [shortName]);
-    public bool? GetBoolean(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetBooleanOption(name, aliases, shortNames);
-
-    public byte? GetByte() => GetNullableStructArgumentValue<byte>();
-    public byte? GetByte(string name) => GetNullableStructOptionValue<byte>(name);
-    public byte? GetByte(string name, char shortName) => GetNullableStructOptionValue<byte>(name, shortNames: [shortName]);
-    public byte? GetByte(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<byte>(name, aliases, shortNames);
-
-    public short? GetInt16() => GetNullableStructArgumentValue<short>();
-    public short? GetInt16(string name) => GetNullableStructOptionValue<short>(name);
-    public short? GetInt16(string name, char shortName) => GetNullableStructOptionValue<short>(name, shortNames: [shortName]);
-    public short? GetInt16(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<short>(name, aliases, shortNames);
-
-    public int? GetInt32() => GetNullableStructArgumentValue<int>();
-    public int? GetInt32(string name) => GetNullableStructOptionValue<int>(name);
-    public int? GetInt32(string name, char shortName) => GetNullableStructOptionValue<int>(name, shortNames: [shortName]);
-    public int? GetInt32(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<int>(name, aliases, shortNames);
-
-    public long? GetInt64() => GetNullableStructArgumentValue<long>();
-    public long? GetInt64(string name) => GetNullableStructOptionValue<long>(name);
-    public long? GetInt64(string name, char shortName) => GetNullableStructOptionValue<long>(name, shortNames: [shortName]);
-    public long? GetInt64(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<long>(name, aliases, shortNames);
-
-    public float? GetSingle() => GetNullableStructArgumentValue<float>();
-    public float? GetSingle(string name) => GetNullableStructOptionValue<float>(name);
-    public float? GetSingle(string name, char shortName) => GetNullableStructOptionValue<float>(name, shortNames: [shortName]);
-    public float? GetSingle(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<float>(name, aliases, shortNames);
-
-    public double? GetDouble() => GetNullableStructArgumentValue<double>();
-    public double? GetDouble(string name) => GetNullableStructOptionValue<double>(name);
-    public double? GetDouble(string name, char shortName) => GetNullableStructOptionValue<double>(name, shortNames: [shortName]);
-    public double? GetDouble(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<double>(name, aliases, shortNames);
-
-    public decimal? GetDecimal() => GetNullableStructArgumentValue<decimal>();
-    public decimal? GetDecimal(string name) => GetNullableStructOptionValue<decimal>(name);
-    public decimal? GetDecimal(string name, char shortName) => GetNullableStructOptionValue<decimal>(name, shortNames: [shortName]);
-    public decimal? GetDecimal(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<decimal>(name, aliases, shortNames);
-
-    public string? GetString() => GetNullableReferenceArgumentValue<string>();
-    public string? GetString(string name) => GetNullableReferenceOptionValue<string>(name);
-    public string? GetString(string name, char shortName) => GetNullableReferenceOptionValue<string>(name, shortNames: [shortName]);
-    public string? GetString(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<string>(name, aliases, shortNames);
-
-    public char? GetChar() => ConvertStringToChar(GetNullableReferenceArgumentValue<string>());
-    public char? GetChar(string name) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name));
-    public char? GetChar(string name, char shortName) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name, shortNames: [shortName]));
-    public char? GetChar(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name, aliases, shortNames));
-
-    public DateTime? GetDateTime() => GetNullableStructArgumentValue<DateTime>();
-    public DateTime? GetDateTime(string name) => GetNullableStructOptionValue<DateTime>(name);
-    public DateTime? GetDateTime(string name, char shortName) => GetNullableStructOptionValue<DateTime>(name, shortNames: [shortName]);
-    public DateTime? GetDateTime(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<DateTime>(name, aliases, shortNames);
-
-    public DateTimeOffset? GetDateTimeOffset() => GetNullableStructArgumentValue<DateTimeOffset>();
-    public DateTimeOffset? GetDateTimeOffset(string name) => GetNullableStructOptionValue<DateTimeOffset>(name);
-    public DateTimeOffset? GetDateTimeOffset(string name, char shortName) => GetNullableStructOptionValue<DateTimeOffset>(name, shortNames: [shortName]);
-    public DateTimeOffset? GetDateTimeOffset(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<DateTimeOffset>(name, aliases, shortNames);
-
-    public Guid? GetGuid() => GetNullableStructArgumentValue<Guid>();
-    public Guid? GetGuid(string name) => GetNullableStructOptionValue<Guid>(name);
-    public Guid? GetGuid(string name, char shortName) => GetNullableStructOptionValue<Guid>(name, shortNames: [shortName]);
-    public Guid? GetGuid(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<Guid>(name, aliases, shortNames);
-
-    public sbyte? GetSByte() => GetNullableStructArgumentValue<sbyte>();
-    public sbyte? GetSByte(string name) => GetNullableStructOptionValue<sbyte>(name);
-    public sbyte? GetSByte(string name, char shortName) => GetNullableStructOptionValue<sbyte>(name, shortNames: [shortName]);
-    public sbyte? GetSByte(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<sbyte>(name, aliases, shortNames);
-
-    public ushort? GetUInt16() => GetNullableStructArgumentValue<ushort>();
-    public ushort? GetUInt16(string name) => GetNullableStructOptionValue<ushort>(name);
-    public ushort? GetUInt16(string name, char shortName) => GetNullableStructOptionValue<ushort>(name, shortNames: [shortName]);
-    public ushort? GetUInt16(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<ushort>(name, aliases, shortNames);
-
-    public uint? GetUInt32() => GetNullableStructArgumentValue<uint>();
-    public uint? GetUInt32(string name) => GetNullableStructOptionValue<uint>(name);
-    public uint? GetUInt32(string name, char shortName) => GetNullableStructOptionValue<uint>(name, shortNames: [shortName]);
-    public uint? GetUInt32(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<uint>(name, aliases, shortNames);
-
-    public ulong? GetUInt64() => GetNullableStructArgumentValue<ulong>();
-    public ulong? GetUInt64(string name) => GetNullableStructOptionValue<ulong>(name);
-    public ulong? GetUInt64(string name, char shortName) => GetNullableStructOptionValue<ulong>(name, shortNames: [shortName]);
-    public ulong? GetUInt64(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<ulong>(name, aliases, shortNames);
-
-
-    public bool GetRequiredBoolean() => GetNullableStructArgumentValue<bool>() ?? throw new ArgumentNullException();
-    public bool GetRequiredBoolean(string name) => GetBooleanOption(name) ?? throw new ArgumentNullException(name);
-    public bool GetRequiredBoolean(string name, char shortName) => GetBooleanOption(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public bool GetRequiredBoolean(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetBooleanOption(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public byte GetRequiredByte() => GetNullableStructArgumentValue<byte>() ?? throw new ArgumentNullException();
-    public byte GetRequiredByte(string name) => GetNullableStructOptionValue<byte>(name) ?? throw new ArgumentNullException(name);
-    public byte GetRequiredByte(string name, char shortName) => GetNullableStructOptionValue<byte>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public byte GetRequiredByte(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<byte>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public short GetRequiredInt16() => GetNullableStructArgumentValue<short>() ?? throw new ArgumentNullException();
-    public short GetRequiredInt16(string name) => GetNullableStructOptionValue<short>(name) ?? throw new ArgumentNullException(name);
-    public short GetRequiredInt16(string name, char shortName) => GetNullableStructOptionValue<short>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public short GetRequiredInt16(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<short>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public int GetRequiredInt32() => GetNullableStructArgumentValue<int>() ?? throw new ArgumentNullException();
-    public int GetRequiredInt32(string name) => GetNullableStructOptionValue<int>(name) ?? throw new ArgumentNullException(name);
-    public int GetRequiredInt32(string name, char shortName) => GetNullableStructOptionValue<int>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public int GetRequiredInt32(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<int>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public long GetRequiredInt64() => GetNullableStructArgumentValue<long>() ?? throw new ArgumentNullException();
-    public long GetRequiredInt64(string name) => GetNullableStructOptionValue<long>(name) ?? throw new ArgumentNullException(name);
-    public long GetRequiredInt64(string name, char shortName) => GetNullableStructOptionValue<long>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public long GetRequiredInt64(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<long>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public float GetRequiredSingle() => GetNullableStructArgumentValue<float>() ?? throw new ArgumentNullException();
-    public float GetRequiredSingle(string name) => GetNullableStructOptionValue<float>(name) ?? throw new ArgumentNullException(name);
-    public float GetRequiredSingle(string name, char shortName) => GetNullableStructOptionValue<float>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public float GetRequiredSingle(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<float>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public double GetRequiredDouble() => GetNullableStructArgumentValue<double>() ?? throw new ArgumentNullException();
-    public double GetRequiredDouble(string name) => GetNullableStructOptionValue<double>(name) ?? throw new ArgumentNullException(name);
-    public double GetRequiredDouble(string name, char shortName) => GetNullableStructOptionValue<double>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public double GetRequiredDouble(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<double>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public decimal GetRequiredDecimal() => GetNullableStructArgumentValue<decimal>() ?? throw new ArgumentNullException();
-    public decimal GetRequiredDecimal(string name) => GetNullableStructOptionValue<decimal>(name) ?? throw new ArgumentNullException(name);
-    public decimal GetRequiredDecimal(string name, char shortName) => GetNullableStructOptionValue<decimal>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public decimal GetRequiredDecimal(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<decimal>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public string GetRequiredString() => GetNullableReferenceArgumentValue<string>() ?? throw new ArgumentNullException();
-    public string GetRequiredString(string name) => GetNullableReferenceOptionValue<string>(name) ?? throw new ArgumentNullException(name);
-    public string GetRequiredString(string name, char shortName) => GetNullableReferenceOptionValue<string>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public string GetRequiredString(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<string>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public char GetRequiredChar() => ConvertStringToChar(GetNullableReferenceArgumentValue<string>()) ?? throw new ArgumentNullException();
-    public char GetRequiredChar(string name) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name)) ?? throw new ArgumentNullException(name);
-    public char GetRequiredChar(string name, char shortName) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name, shortNames: [shortName])) ?? throw new ArgumentNullException(name);
-    public char GetRequiredChar(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name, aliases, shortNames)) ?? throw new ArgumentNullException(name);
-
-    public DateTime GetRequiredDateTime() => GetNullableStructArgumentValue<DateTime>() ?? throw new ArgumentNullException();
-    public DateTime GetRequiredDateTime(string name) => GetNullableStructOptionValue<DateTime>(name) ?? throw new ArgumentNullException(name);
-    public DateTime GetRequiredDateTime(string name, char shortName) => GetNullableStructOptionValue<DateTime>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public DateTime GetRequiredDateTime(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<DateTime>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public DateTimeOffset GetRequiredDateTimeOffset() => GetNullableStructArgumentValue<DateTimeOffset>() ?? throw new ArgumentNullException();
-    public DateTimeOffset GetRequiredDateTimeOffset(string name) => GetNullableStructOptionValue<DateTimeOffset>(name) ?? throw new ArgumentNullException(name);
-    public DateTimeOffset GetRequiredDateTimeOffset(string name, char shortName) => GetNullableStructOptionValue<DateTimeOffset>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public DateTimeOffset GetRequiredDateTimeOffset(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<DateTimeOffset>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public Guid GetRequiredGuid() => GetNullableStructArgumentValue<Guid>() ?? throw new ArgumentNullException();
-    public Guid GetRequiredGuid(string name) => GetNullableStructOptionValue<Guid>(name) ?? throw new ArgumentNullException(name);
-    public Guid GetRequiredGuid(string name, char shortName) => GetNullableStructOptionValue<Guid>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public Guid GetRequiredGuid(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<Guid>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public sbyte GetRequiredSByte() => GetNullableStructArgumentValue<sbyte>() ?? throw new ArgumentNullException();
-    public sbyte GetRequiredSByte(string name) => GetNullableStructOptionValue<sbyte>(name) ?? throw new ArgumentNullException(name);
-    public sbyte GetRequiredSByte(string name, char shortName) => GetNullableStructOptionValue<sbyte>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public sbyte GetRequiredSByte(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<sbyte>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public ushort GetRequiredUInt16() => GetNullableStructArgumentValue<ushort>() ?? throw new ArgumentNullException();
-    public ushort GetRequiredUInt16(string name) => GetNullableStructOptionValue<ushort>(name) ?? throw new ArgumentNullException(name);
-    public ushort GetRequiredUInt16(string name, char shortName) => GetNullableStructOptionValue<ushort>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public ushort GetRequiredUInt16(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<ushort>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public uint GetRequiredUInt32() => GetNullableStructArgumentValue<uint>() ?? throw new ArgumentNullException();
-    public uint GetRequiredUInt32(string name) => GetNullableStructOptionValue<uint>(name) ?? throw new ArgumentNullException(name);
-    public uint GetRequiredUInt32(string name, char shortName) => GetNullableStructOptionValue<uint>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public uint GetRequiredUInt32(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<uint>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public ulong GetRequiredUInt64() => GetNullableStructArgumentValue<ulong>() ?? throw new ArgumentNullException();
-    public ulong GetRequiredUInt64(string name) => GetNullableStructOptionValue<ulong>(name) ?? throw new ArgumentNullException(name);
-    public ulong GetRequiredUInt64(string name, char shortName) => GetNullableStructOptionValue<ulong>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public ulong GetRequiredUInt64(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableStructOptionValue<ulong>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-
-    public bool[]? GetBooleans() => GetNullableReferenceArgumentValue<bool[]>();
-    public bool[]? GetBooleans(string name) => GetNullableReferenceOptionValue<bool[]>(name);
-    public bool[]? GetBooleans(string name, char shortName) => GetNullableReferenceOptionValue<bool[]>(name, shortNames: [shortName]);
-    public bool[]? GetBooleans(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<bool[]>(name, aliases, shortNames);
-
-    public byte[]? GetBytes() => GetNullableReferenceArgumentValue<byte[]>();
-    public byte[]? GetBytes(string name) => GetNullableReferenceOptionValue<byte[]>(name);
-    public byte[]? GetBytes(string name, char shortName) => GetNullableReferenceOptionValue<byte[]>(name, shortNames: [shortName]);
-    public byte[]? GetBytes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<byte[]>(name, aliases, shortNames);
-
-    public short[]? GetInt16s() => GetNullableReferenceArgumentValue<short[]>();
-    public short[]? GetInt16s(string name) => GetNullableReferenceOptionValue<short[]>(name);
-    public short[]? GetInt16s(string name, char shortName) => GetNullableReferenceOptionValue<short[]>(name, shortNames: [shortName]);
-    public short[]? GetInt16s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<short[]>(name, aliases, shortNames);
-
-    public int[]? GetInt32s() => GetNullableReferenceArgumentValue<int[]>();
-    public int[]? GetInt32s(string name) => GetNullableReferenceOptionValue<int[]>(name);
-    public int[]? GetInt32s(string name, char shortName) => GetNullableReferenceOptionValue<int[]>(name, shortNames: [shortName]);
-    public int[]? GetInt32s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<int[]>(name, aliases, shortNames);
-
-    public long[]? GetInt64s() => GetNullableReferenceArgumentValue<long[]>();
-    public long[]? GetInt64s(string name) => GetNullableReferenceOptionValue<long[]>(name);
-    public long[]? GetInt64s(string name, char shortName) => GetNullableReferenceOptionValue<long[]>(name, shortNames: [shortName]);
-    public long[]? GetInt64s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<long[]>(name, aliases, shortNames);
-
-    public float[]? GetSingles() => GetNullableReferenceArgumentValue<float[]>();
-    public float[]? GetSingles(string name) => GetNullableReferenceOptionValue<float[]>(name);
-    public float[]? GetSingles(string name, char shortName) => GetNullableReferenceOptionValue<float[]>(name, shortNames: [shortName]);
-    public float[]? GetSingles(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<float[]>(name, aliases, shortNames);
-
-    public double[]? GetDoubles() => GetNullableReferenceArgumentValue<double[]>();
-    public double[]? GetDoubles(string name) => GetNullableReferenceOptionValue<double[]>(name);
-    public double[]? GetDoubles(string name, char shortName) => GetNullableReferenceOptionValue<double[]>(name, shortNames: [shortName]);
-    public double[]? GetDoubles(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<double[]>(name, aliases, shortNames);
-
-    public decimal[]? GetDecimals() => GetNullableReferenceArgumentValue<decimal[]>();
-    public decimal[]? GetDecimals(string name) => GetNullableReferenceOptionValue<decimal[]>(name);
-    public decimal[]? GetDecimals(string name, char shortName) => GetNullableReferenceOptionValue<decimal[]>(name, shortNames: [shortName]);
-    public decimal[]? GetDecimals(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<decimal[]>(name, aliases, shortNames);
-
-    public string[]? GetStrings() => GetNullableReferenceArgumentValue<string[]>();
-    public string[]? GetStrings(string name) => GetNullableReferenceOptionValue<string[]>(name);
-    public string[]? GetStrings(string name, char shortName) => GetNullableReferenceOptionValue<string[]>(name, shortNames: [shortName]);
-    public string[]? GetStrings(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<string[]>(name, aliases, shortNames);
-
-    public char[]? GetChars() => GetNullableReferenceArgumentValue<string[]>()?.Select(ConvertStringsToChars).ToArray();
-    public char[]? GetChars(string name) => GetNullableReferenceOptionValue<string[]>(name)?.Select(ConvertStringsToChars).ToArray();
-    public char[]? GetChars(string name, char shortName) => GetNullableReferenceOptionValue<string[]>(name, shortNames: [shortName])?.Select(ConvertStringsToChars).ToArray();
-    public char[]? GetChars(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<string[]>(name, aliases, shortNames)?.Select(ConvertStringsToChars).ToArray();
-
-    public DateTime[]? GetDateTimes() => GetNullableReferenceArgumentValue<DateTime[]>();
-    public DateTime[]? GetDateTimes(string name) => GetNullableReferenceOptionValue<DateTime[]>(name);
-    public DateTime[]? GetDateTimes(string name, char shortName) => GetNullableReferenceOptionValue<DateTime[]>(name, shortNames: [shortName]);
-    public DateTime[]? GetDateTimes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<DateTime[]>(name, aliases, shortNames);
-
-    public DateTimeOffset[]? GetDateTimeOffsets() => GetNullableReferenceArgumentValue<DateTimeOffset[]>();
-    public DateTimeOffset[]? GetDateTimeOffsets(string name) => GetNullableReferenceOptionValue<DateTimeOffset[]>(name);
-    public DateTimeOffset[]? GetDateTimeOffsets(string name, char shortName) => GetNullableReferenceOptionValue<DateTimeOffset[]>(name, shortNames: [shortName]);
-    public DateTimeOffset[]? GetDateTimeOffsets(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<DateTimeOffset[]>(name, aliases, shortNames);
-
-    public Guid[]? GetGuids() => GetNullableReferenceArgumentValue<Guid[]>();
-    public Guid[]? GetGuids(string name) => GetNullableReferenceOptionValue<Guid[]>(name);
-    public Guid[]? GetGuids(string name, char shortName) => GetNullableReferenceOptionValue<Guid[]>(name, shortNames: [shortName]);
-    public Guid[]? GetGuids(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<Guid[]>(name, aliases, shortNames);
-
-    public sbyte[]? GetSBytes() => GetNullableReferenceArgumentValue<sbyte[]>();
-    public sbyte[]? GetSBytes(string name) => GetNullableReferenceOptionValue<sbyte[]>(name);
-    public sbyte[]? GetSBytes(string name, char shortName) => GetNullableReferenceOptionValue<sbyte[]>(name, shortNames: [shortName]);
-    public sbyte[]? GetSBytes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<sbyte[]>(name, aliases, shortNames);
-
-    public ushort[]? GetUInt16s() => GetNullableReferenceArgumentValue<ushort[]>();
-    public ushort[]? GetUInt16s(string name) => GetNullableReferenceOptionValue<ushort[]>(name);
-    public ushort[]? GetUInt16s(string name, char shortName) => GetNullableReferenceOptionValue<ushort[]>(name, shortNames: [shortName]);
-    public ushort[]? GetUInt16s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<ushort[]>(name, aliases, shortNames);
-
-    public uint[]? GetUInt32s() => GetNullableReferenceArgumentValue<uint[]>();
-    public uint[]? GetUInt32s(string name) => GetNullableReferenceOptionValue<uint[]>(name);
-    public uint[]? GetUInt32s(string name, char shortName) => GetNullableReferenceOptionValue<uint[]>(name, shortNames: [shortName]);
-    public uint[]? GetUInt32s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<uint[]>(name, aliases, shortNames);
-
-    public ulong[]? GetUInt64s() => GetNullableReferenceArgumentValue<ulong[]>();
-    public ulong[]? GetUInt64s(string name) => GetNullableReferenceOptionValue<ulong[]>(name);
-    public ulong[]? GetUInt64s(string name, char shortName) => GetNullableReferenceOptionValue<ulong[]>(name, shortNames: [shortName]);
-    public ulong[]? GetUInt64s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<ulong[]>(name, aliases, shortNames);
-
-
-    public bool[] GetRequiredBooleans() => GetNullableReferenceArgumentValue<bool[]>() ?? throw new ArgumentNullException();
-    public bool[] GetRequiredBooleans(string name) => GetNullableReferenceOptionValue<bool[]>(name) ?? throw new ArgumentNullException(name);
-    public bool[] GetRequiredBooleans(string name, char shortName) => GetNullableReferenceOptionValue<bool[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public bool[] GetRequiredBooleans(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<bool[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public byte[] GetRequiredBytes() => GetNullableReferenceArgumentValue<byte[]>() ?? throw new ArgumentNullException();
-    public byte[] GetRequiredBytes(string name) => GetNullableReferenceOptionValue<byte[]>(name) ?? throw new ArgumentNullException(name);
-    public byte[] GetRequiredBytes(string name, char shortName) => GetNullableReferenceOptionValue<byte[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public byte[] GetRequiredBytes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<byte[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public short[] GetRequiredInt16s() => GetNullableReferenceArgumentValue<short[]>() ?? throw new ArgumentNullException();
-    public short[] GetRequiredInt16s(string name) => GetNullableReferenceOptionValue<short[]>(name) ?? throw new ArgumentNullException(name);
-    public short[] GetRequiredInt16s(string name, char shortName) => GetNullableReferenceOptionValue<short[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public short[] GetRequiredInt16s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<short[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public int[] GetRequiredInt32s() => GetNullableReferenceArgumentValue<int[]>() ?? throw new ArgumentNullException();
-    public int[] GetRequiredInt32s(string name) => GetNullableReferenceOptionValue<int[]>(name) ?? throw new ArgumentNullException(name);
-    public int[] GetRequiredInt32s(string name, char shortName) => GetNullableReferenceOptionValue<int[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public int[] GetRequiredInt32s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<int[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public long[] GetRequiredInt64s() => GetNullableReferenceArgumentValue<long[]>() ?? throw new ArgumentNullException();
-    public long[] GetRequiredInt64s(string name) => GetNullableReferenceOptionValue<long[]>(name) ?? throw new ArgumentNullException(name);
-    public long[] GetRequiredInt64s(string name, char shortName) => GetNullableReferenceOptionValue<long[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public long[] GetRequiredInt64s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<long[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public float[] GetRequiredSingles() => GetNullableReferenceArgumentValue<float[]>() ?? throw new ArgumentNullException();
-    public float[] GetRequiredSingles(string name) => GetNullableReferenceOptionValue<float[]>(name) ?? throw new ArgumentNullException(name);
-    public float[] GetRequiredSingles(string name, char shortName) => GetNullableReferenceOptionValue<float[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public float[] GetRequiredSingles(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<float[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public double[] GetRequiredDoubles() => GetNullableReferenceArgumentValue<double[]>() ?? throw new ArgumentNullException();
-    public double[] GetRequiredDoubles(string name) => GetNullableReferenceOptionValue<double[]>(name) ?? throw new ArgumentNullException(name);
-    public double[] GetRequiredDoubles(string name, char shortName) => GetNullableReferenceOptionValue<double[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public double[] GetRequiredDoubles(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<double[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public decimal[] GetRequiredDecimals() => GetNullableReferenceArgumentValue<decimal[]>() ?? throw new ArgumentNullException();
-    public decimal[] GetRequiredDecimals(string name) => GetNullableReferenceOptionValue<decimal[]>(name) ?? throw new ArgumentNullException(name);
-    public decimal[] GetRequiredDecimals(string name, char shortName) => GetNullableReferenceOptionValue<decimal[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public decimal[] GetRequiredDecimals(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<decimal[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public string[] GetRequiredStrings() => GetNullableReferenceArgumentValue<string[]>() ?? throw new ArgumentNullException();
-    public string[] GetRequiredStrings(string name) => GetNullableReferenceOptionValue<string[]>(name) ?? throw new ArgumentNullException(name);
-    public string[] GetRequiredStrings(string name, char shortName) => GetNullableReferenceOptionValue<string[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public string[] GetRequiredStrings(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<string[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public char[] GetRequiredChars() => GetNullableReferenceArgumentValue<string[]>()?.Select(ConvertStringsToChars).ToArray() ?? throw new ArgumentNullException();
-    public char[] GetRequiredChars(string name) => GetNullableReferenceOptionValue<string[]>(name)?.Select(ConvertStringsToChars).ToArray() ?? throw new ArgumentNullException(name);
-    public char[] GetRequiredChars(string name, char shortName) => GetNullableReferenceOptionValue<string[]>(name, shortNames: [shortName])?.Select(ConvertStringsToChars).ToArray() ?? throw new ArgumentNullException(name);
-    public char[] GetRequiredChars(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<string[]>(name, aliases, shortNames)?.Select(ConvertStringsToChars).ToArray() ?? throw new ArgumentNullException(name);
-
-    public DateTime[] GetRequiredDateTimes() => GetNullableReferenceArgumentValue<DateTime[]>() ?? throw new ArgumentNullException();
-    public DateTime[] GetRequiredDateTimes(string name) => GetNullableReferenceOptionValue<DateTime[]>(name) ?? throw new ArgumentNullException(name);
-    public DateTime[] GetRequiredDateTimes(string name, char shortName) => GetNullableReferenceOptionValue<DateTime[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public DateTime[] GetRequiredDateTimes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<DateTime[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public DateTimeOffset[] GetRequiredDateTimeOffsets() => GetNullableReferenceArgumentValue<DateTimeOffset[]>() ?? throw new ArgumentNullException();
-    public DateTimeOffset[] GetRequiredDateTimeOffsets(string name) => GetNullableReferenceOptionValue<DateTimeOffset[]>(name) ?? throw new ArgumentNullException(name);
-    public DateTimeOffset[] GetRequiredDateTimeOffsets(string name, char shortName) => GetNullableReferenceOptionValue<DateTimeOffset[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public DateTimeOffset[] GetRequiredDateTimeOffsets(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<DateTimeOffset[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public Guid[] GetRequiredGuids() => GetNullableReferenceArgumentValue<Guid[]>() ?? throw new ArgumentNullException();
-    public Guid[] GetRequiredGuids(string name) => GetNullableReferenceOptionValue<Guid[]>(name) ?? throw new ArgumentNullException(name);
-    public Guid[] GetRequiredGuids(string name, char shortName) => GetNullableReferenceOptionValue<Guid[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public Guid[] GetRequiredGuids(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<Guid[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public sbyte[] GetRequiredSBytes() => GetNullableReferenceArgumentValue<sbyte[]>() ?? throw new ArgumentNullException();
-    public sbyte[] GetRequiredSBytes(string name) => GetNullableReferenceOptionValue<sbyte[]>(name) ?? throw new ArgumentNullException(name);
-    public sbyte[] GetRequiredSBytes(string name, char shortName) => GetNullableReferenceOptionValue<sbyte[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public sbyte[] GetRequiredSBytes(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<sbyte[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public ushort[] GetRequiredUInt16s() => GetNullableReferenceArgumentValue<ushort[]>() ?? throw new ArgumentNullException();
-    public ushort[] GetRequiredUInt16s(string name) => GetNullableReferenceOptionValue<ushort[]>(name) ?? throw new ArgumentNullException(name);
-    public ushort[] GetRequiredUInt16s(string name, char shortName) => GetNullableReferenceOptionValue<ushort[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public ushort[] GetRequiredUInt16s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<ushort[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public uint[] GetRequiredUInt32s() => GetNullableReferenceArgumentValue<uint[]>() ?? throw new ArgumentNullException();
-    public uint[] GetRequiredUInt32s(string name) => GetNullableReferenceOptionValue<uint[]>(name) ?? throw new ArgumentNullException(name);
-    public uint[] GetRequiredUInt32s(string name, char shortName) => GetNullableReferenceOptionValue<uint[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public uint[] GetRequiredUInt32s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<uint[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-    public ulong[] GetRequiredUInt64s() => GetNullableReferenceArgumentValue<ulong[]>() ?? throw new ArgumentNullException();
-    public ulong[] GetRequiredUInt64s(string name) => GetNullableReferenceOptionValue<ulong[]>(name) ?? throw new ArgumentNullException(name);
-    public ulong[] GetRequiredUInt64s(string name, char shortName) => GetNullableReferenceOptionValue<ulong[]>(name, shortNames: [shortName]) ?? throw new ArgumentNullException(name);
-    public ulong[] GetRequiredUInt64s(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<ulong[]>(name, aliases, shortNames) ?? throw new ArgumentNullException(name);
-
-
 
     // Cannot parse char values from command line arguments -- treat them as single-character strings
     private static char? ConvertStringToChar(string? value) => value switch
@@ -401,6 +50,9 @@ public struct CliParseResult
             throw new InvalidOperationException("Named option values must be used before unnamed argument values. Otherwise, the named options and their values could be returned as argument values.");
         }
 
+        // Infer the first character as a short name if it is not already used
+        shortNames ??= (_shortNamesUsed.Contains(name[0]) ? [] : [name[0]]);
+
         if (_options.TryGetValue(name, out var option))
         {
             if (option is not Option<T> optionT)
@@ -408,21 +60,76 @@ public struct CliParseResult
                 throw new InvalidCastException($"Option '{name}' is not defined as type '{typeof(T).Name}'.");
             }
 
-            return TryGetResultValue<T>(out value, optionT);
+            var success = TryGetResultValue<T>(BuildParser(), optionT, out value, out var unmatchedTokens);
+
+            // If the option was not found but it has a shortname and there are unmatched tokens,
+            // it's possible that the option is bundled with other short names that haven't yet been defined as options.
+            if (!success && shortNames.Any() && unmatchedTokens.Any())
+            {
+                success = TryGetOptionValueFromUnmatchedBundles(ref value, shortNames, optionT, unmatchedTokens);
+            }
+
+            return success;
         }
 
-        AddOption<T>(name, aliases, shortNames);
+        option = BuildOption<T>(name, aliases ?? [], shortNames);
+        _options.Add(name, option);
+        _shortNamesUsed.AddRange(shortNames);
+
         return TryGetOptionValue<T>(out value, name, aliases, shortNames);
+    }
+
+    private bool TryGetOptionValueFromUnmatchedBundles<T>(ref T? value, IEnumerable<char> shortNames, Option<T> optionT, IEnumerable<string> unmatchedTokens)
+    {
+        // If the option was not found, but one of its short names is part of a bundle of short names,
+        // try adding the other short names as options and see if the option value can be parsed.
+        // Capture the original args (for use in lambda)
+        var originalArgs = _args;
+
+        // Unmatched bundles are unmatched tokens that start with a hyphen and contain more than one character
+        var unmatchedBundles = unmatchedTokens.Where(t => BundlePattern().IsMatch(t)).Select(t => t[1..]);
+
+        // Partially matched bundles are unmatched tokens that do not start with a hyphen and do not match any of the original arguments
+        // These have already been unbundled with some short names matched and removed already (along with the hyphen)
+        var partiallyMatchedBundles = unmatchedTokens.Where(t => !BundlePattern().IsMatch(t) && !originalArgs.Contains(t));
+
+        foreach (var bundle in unmatchedBundles.Concat(partiallyMatchedBundles))
+        {
+            var index = bundle.IndexOfAny(shortNames.ToArray());
+
+            if (index >= 0)
+            {
+                var otherFlags = bundle[..index] + bundle[(index + 1)..];
+                List<Option> stubOptions = [];
+
+                // Add stub options for each short name not already defined as an option
+                foreach (var flag in otherFlags.Except(_shortNamesUsed))
+                {
+                    stubOptions.Add(BuildOption<T>(flag.ToString(), [], [flag]));
+                }
+
+                return TryGetResultValue<T>(BuildParser(stubOptions), optionT, out value, out _);
+            }
+        }
+
+        return false;
     }
 
     private T? GetNullableReferenceArgumentValue<T>() where T : class => TryGetArgumentValue<T>(out var value) ? value : null;
     private T? GetNullableStructArgumentValue<T>() where T : struct => TryGetArgumentValue<T>(out var value) ? value : null;
 
-    private bool TryGetArgumentValue<T>(out T? value) => TryGetResultValue(out value, AddArgument<T>());
-
-    private readonly bool TryGetResultValue<T>(out T? value, Symbol symbol)
+    private bool TryGetArgumentValue<T>(out T? value)
     {
-        var result = _parser.Parse(_args);
+        var argument = BuildArgument<T>();
+        _arguments.Add(argument);
+
+        return TryGetResultValue(BuildParser(), argument, out value, out _);
+    }
+
+    [SuppressMessage("Style", "IDE0251:Make member 'readonly'", Justification = "Reserving the opportunity to have a stateful root command or parser")]
+    private bool TryGetResultValue<T>(Parser parser, Symbol symbol, out T? value, out IEnumerable<string> unmatchedTokens)
+    {
+        var result = parser.Parse(_args);
         var symbolResult = result.FindResultFor(symbol);
 
         (value, bool success) = (symbol, symbolResult) switch
@@ -432,30 +139,26 @@ public struct CliParseResult
             _ => (default, false),
         };
 
+        unmatchedTokens = result.UnmatchedTokens;
         return success;
     }
 
-    private void AddOption<T>(string name, IEnumerable<string>? aliases, IEnumerable<char>? shortNames)
+    private readonly Option<T> BuildOption<T>(string name, IEnumerable<string> aliases, IEnumerable<char> shortNames)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
-
-        shortNames ??= _shortNamesUsed.Contains(name[0]) ?[] : [name[0]];
-        _shortNamesUsed.AddRange(shortNames);
+        ArgumentNullException.ThrowIfNull(aliases);
+        ArgumentNullException.ThrowIfNull(shortNames);
 
         string[] allAliases = [
             $"--{name}",
-            .. aliases?.Select(a => $"--{a}") ?? [],
+            .. aliases.Select(a => $"--{a}"),
             .. shortNames.Select(a => $"-{a}")
             ];
 
-        Option<T> option = new(allAliases);
-
-        _options.Add(name, option);
-        _rootCommand.AddOption(option);
-        _parser = new(new CommandLineConfiguration(_rootCommand, enablePosixBundling: false));
+        return new(allAliases);
     }
 
-    private Argument<T> AddArgument<T>()
+    private readonly Argument<T> BuildArgument<T>()
     {
         string argName = typeof(T).Name.ToLower();
         ushort argCount = _argCounter.TryGetValue(argName, out var count) ? (ushort)(count + 1) : (ushort)1;
@@ -466,16 +169,37 @@ public struct CliParseResult
             argName = $"{argName}_{argCount}";
         }
 
-        var argument = new Argument<T>(argName);
-        _rootCommand.AddArgument(argument);
+        return new(argName);
+    }
 
-        foreach (var command in _rootCommand.Children.OfType<Command>())
+    [SuppressMessage("Style", "IDE0251:Make member 'readonly'", Justification = "Reserving the opportunity to have a stateful root command or parser")]
+    private Parser BuildParser(IEnumerable<Option>? stubOptions = null)
+    {
+        RootCommand rootCommand = new() { TreatUnmatchedTokensAsErrors = false };
+
+        foreach (var option in _options.Values.Concat(stubOptions ?? []))
         {
-            command.AddArgument(argument);
+            rootCommand.AddOption(option);
+
+            //foreach (var command in rootCommand.Children.OfType<Command>())
+            //{
+            //    command.AddOption(option);
+            //}
         }
 
-        _parser = new(_rootCommand);
+        foreach (var argument in _arguments)
+        {
+            rootCommand.AddArgument(argument);
 
-        return argument;
+            //foreach (var command in _rootCommand.Children.OfType<Command>())
+            //{
+            //    command.AddArgument(argument);
+            //}
+        }
+
+        return new(new CommandLineConfiguration(rootCommand, enablePosixBundling: true));
     }
+
+    [GeneratedRegex(@"^-\w+$")]
+    private static partial Regex BundlePattern();
 }
