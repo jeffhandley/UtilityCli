@@ -50,6 +50,8 @@ var cli = UtilityCli.CliArgs.Parse(args, error =>
     Console.WriteLine("Usage: myapp --org <org> --repo <repo> [labels...]");
     Console.WriteLine("  --org, -o    Organization or owner name (required)");
     Console.WriteLine("  --repo, -r   Repository name (required)");
+
+    Environment.Exit(1);
 });
 
 string org = cli.GetRequiredString("org");
