@@ -13,8 +13,6 @@ public partial struct CliParseResult
     private readonly List<char> _shortNamesUsed = [];
     private readonly Dictionary<string, ushort> _argCounter = [];
 
-    public CliParseResult() => throw new ArgumentNullException("args");
-
     public CliParseResult(IEnumerable<string> args)
     {
         _args = args.ToList();
@@ -33,6 +31,12 @@ public partial struct CliParseResult
         [char c] => c,
         _ => throw new InvalidOperationException($"Cannot parse argument '{value}' as expected type 'System.Char'."),
     };
+
+    private static T ThrowMissingRequiredArgument<T>() =>
+        throw new ArgumentException($"Required argument of type '{typeof(T).Name}' was not provided.");
+
+    private static T ThrowMissingRequiredOption<T>(string name) =>
+        throw new ArgumentException($"Required option '--{name}' of type '{typeof(T).Name}' was not provided.", name);
 
     private bool? GetBooleanOption(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) =>
         TryGetOptionValue<bool>(out var value, name, aliases, shortNames) ? value : null;
@@ -60,7 +64,8 @@ public partial struct CliParseResult
                 throw new InvalidCastException($"Option '{name}' is not defined as type '{typeof(T).Name}'.");
             }
 
-            var success = TryGetResultValue<T>(BuildParser(), optionT, out value, out var unmatchedTokens);
+            var (rootCommand, config) = BuildParser();
+            var success = TryGetResultValue<T>(rootCommand, config, optionT, out value, out var unmatchedTokens);
 
             // If the option was not found but it has a shortname and there are unmatched tokens,
             // it's possible that the option is bundled with other short names that haven't yet been defined as options.
@@ -76,7 +81,17 @@ public partial struct CliParseResult
         _options.Add(name, option);
         _shortNamesUsed.AddRange(shortNames);
 
-        return TryGetOptionValue<T>(out value, name, aliases, shortNames);
+        var (newRootCommand, newConfig) = BuildParser();
+        var newSuccess = TryGetResultValue(newRootCommand, newConfig, option, out value, out var newUnmatchedTokens);
+
+        // If the option was not found but it has a shortname and there are unmatched tokens,
+        // it's possible that the option is bundled with other short names that haven't yet been defined as options.
+        if (!newSuccess && shortNames.Any() && newUnmatchedTokens.Any())
+        {
+            newSuccess = TryGetOptionValueFromUnmatchedBundles(ref value, shortNames, (Option<T>)option, newUnmatchedTokens);
+        }
+
+        return newSuccess;
     }
 
     private bool TryGetOptionValueFromUnmatchedBundles<T>(ref T? value, IEnumerable<char> shortNames, Option<T> optionT, IEnumerable<string> unmatchedTokens)
@@ -108,7 +123,8 @@ public partial struct CliParseResult
                     stubOptions.Add(BuildOption<T>(flag.ToString(), [], [flag]));
                 }
 
-                return TryGetResultValue<T>(BuildParser(stubOptions), optionT, out value, out _);
+                var (stubRootCommand, stubConfig) = BuildParser(stubOptions);
+                return TryGetResultValue<T>(stubRootCommand, stubConfig, optionT, out value, out _);
             }
         }
 
@@ -123,17 +139,31 @@ public partial struct CliParseResult
         var argument = BuildArgument<T>();
         _arguments.Add(argument);
 
-        return TryGetResultValue(BuildParser(), argument, out value, out _);
+        var (rootCommand, config) = BuildParser();
+        return TryGetResultValue(rootCommand, config, argument, out value, out _);
     }
 
     [SuppressMessage("Style", "IDE0251:Make member 'readonly'", Justification = "Reserving the opportunity to have a stateful root command or parser")]
-    private bool TryGetResultValue<T>(Parser parser, Symbol symbol, out T? value, out IEnumerable<string> unmatchedTokens)
+    private bool TryGetResultValue<T>(RootCommand rootCommand, ParserConfiguration config, Symbol symbol, out T? value, out IEnumerable<string> unmatchedTokens)
     {
-        var result = parser.Parse(_args);
-        var symbolResult = result.FindResultFor(symbol);
+        var result = CommandLineParser.Parse(rootCommand, _args, config);
+        var symbolResult = result.GetResult(symbol);
 
         (value, bool success) = (symbol, symbolResult) switch
         {
+            // If symbolResult is null (not in args at all), return default with success=false
+            (_, null) => (default, false),
+            // For arguments, check if it was implicit (default/not provided) - return default with success=false
+            (Argument<T>, ArgumentResult argumentResult) when argumentResult.Implicit => (default, false),
+            // For options, check if it was implicit (default/not provided) - return default with success=false
+            (Option<T>, OptionResult optionResult) when optionResult.Implicit => (default, false),
+            // If the result has errors:
+            // - For "Required argument missing" errors, return default (don't throw)
+            // - For other errors (e.g., invalid value), call GetValueOrDefault to throw
+            (Argument<T>, ArgumentResult argumentResult) when argumentResult.Errors.Any(e => e.Message.Contains("Required argument missing")) => (default, false),
+            (Argument<T>, ArgumentResult argumentResult) when argumentResult.Errors.Any() => (argumentResult.GetValueOrDefault<T>(), true),
+            (Option<T>, OptionResult optionResult) when optionResult.Errors.Any() => (optionResult.GetValueOrDefault<T>(), true),
+            // Otherwise, get the value
             (Argument<T>, ArgumentResult argumentResult) => (argumentResult.GetValueOrDefault<T>(), true),
             (Option<T>, OptionResult optionResult) => (optionResult.GetValueOrDefault<T>(), true),
             _ => (default, false),
@@ -149,13 +179,13 @@ public partial struct CliParseResult
         ArgumentNullException.ThrowIfNull(aliases);
         ArgumentNullException.ThrowIfNull(shortNames);
 
-        string[] allAliases = [
-            $"--{name}",
+        string optionName = $"--{name}";
+        string[] optionAliases = [
             .. aliases.Select(a => $"--{a}"),
             .. shortNames.Select(a => $"-{a}")
             ];
 
-        return new(allAliases);
+        return new(optionName, optionAliases);
     }
 
     private readonly Argument<T> BuildArgument<T>()
@@ -173,31 +203,26 @@ public partial struct CliParseResult
     }
 
     [SuppressMessage("Style", "IDE0251:Make member 'readonly'", Justification = "Reserving the opportunity to have a stateful root command or parser")]
-    private Parser BuildParser(IEnumerable<Option>? stubOptions = null)
+    private (RootCommand, ParserConfiguration) BuildParser(IEnumerable<Option>? stubOptions = null)
     {
-        RootCommand rootCommand = new() { TreatUnmatchedTokensAsErrors = false };
+        RootCommand rootCommand = new();
 
         foreach (var option in _options.Values.Concat(stubOptions ?? []))
         {
-            rootCommand.AddOption(option);
-
-            //foreach (var command in rootCommand.Children.OfType<Command>())
-            //{
-            //    command.AddOption(option);
-            //}
+            rootCommand.Options.Add(option);
         }
 
         foreach (var argument in _arguments)
         {
-            rootCommand.AddArgument(argument);
-
-            //foreach (var command in _rootCommand.Children.OfType<Command>())
-            //{
-            //    command.AddArgument(argument);
-            //}
+            rootCommand.Arguments.Add(argument);
         }
 
-        return new(new CommandLineConfiguration(rootCommand, enablePosixBundling: true));
+        var config = new ParserConfiguration
+        {
+            EnablePosixBundling = true
+        };
+
+        return (rootCommand, config);
     }
 
     [GeneratedRegex(@"^-\w+$")]
