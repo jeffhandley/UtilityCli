@@ -12,31 +12,99 @@ public partial struct CliParseResult
     private readonly List<Argument> _arguments = [];
     private readonly List<char> _shortNamesUsed = [];
     private readonly Dictionary<string, ushort> _argCounter = [];
+    private readonly Action<CliError>? _onError;
 
-    public CliParseResult(IEnumerable<string> args)
+    public CliParseResult(IEnumerable<string> args, Action<CliError>? onError = null)
     {
         _args = args.ToList();
+        _onError = onError;
     }
 
     // Cannot parse char values from command line arguments -- treat them as single-character strings
-    private static char? ConvertStringToChar(string? value) => value switch
+    private char? ConvertStringToChar(string? value, string? optionName = null) => value switch
     {
         null or [] => null,
         [char c] => c,
-        _ => throw new InvalidOperationException($"Cannot parse argument '{value}' as expected type 'System.Char'."),
+        _ => ThrowInvalidCharValue<char?>(value, optionName),
     };
 
-    private static char ConvertStringsToChars(string value) => value switch
+    private char ConvertStringsToChars(string value, string? optionName = null) => value switch
     {
         [char c] => c,
-        _ => throw new InvalidOperationException($"Cannot parse argument '{value}' as expected type 'System.Char'."),
+        _ => ThrowInvalidCharValue<char>(value, optionName),
     };
 
-    private static T ThrowMissingRequiredArgument<T>() =>
-        throw new ArgumentException($"Required argument of type '{typeof(T).Name}' was not provided.");
+    private T ThrowInvalidCharValue<T>(string value, string? optionName)
+    {
+        var message = $"Cannot parse argument '{value}' as expected type 'System.Char'.";
+        var exception = new InvalidOperationException(message);
 
-    private static T ThrowMissingRequiredOption<T>(string name) =>
-        throw new ArgumentException($"Required option '--{name}' of type '{typeof(T).Name}' was not provided.", name);
+        if (_onError is not null)
+        {
+            _onError(new CliError(
+                optionName is null ? CliErrorKind.InvalidArgumentValue : CliErrorKind.InvalidOptionValue,
+                message,
+                exception,
+                optionName: optionName,
+                expectedType: typeof(char),
+                rawValue: value));
+
+            return default!;
+        }
+
+        throw exception;
+    }
+
+    private char[]? ConvertStringsToCharsArray(string[]? values, string? optionName = null)
+    {
+        if (values is null) return null;
+        var result = new char[values.Length];
+        for (int i = 0; i < values.Length; i++)
+        {
+            result[i] = ConvertStringsToChars(values[i], optionName);
+        }
+        return result;
+    }
+
+    private T ThrowMissingRequiredArgument<T>()
+    {
+        var message = $"Required argument of type '{typeof(T).Name}' was not provided.";
+        var exception = new ArgumentException(message);
+
+        if (_onError is not null)
+        {
+            _onError(new CliError(
+                CliErrorKind.MissingRequiredArgument,
+                message,
+                exception,
+                optionName: null,
+                expectedType: typeof(T)));
+
+            return default!;
+        }
+
+        throw exception;
+    }
+
+    private T ThrowMissingRequiredOption<T>(string name)
+    {
+        var message = $"Required option '--{name}' of type '{typeof(T).Name}' was not provided.";
+        var exception = new ArgumentException(message, name);
+
+        if (_onError is not null)
+        {
+            _onError(new CliError(
+                CliErrorKind.MissingRequiredOption,
+                message,
+                exception,
+                optionName: name,
+                expectedType: typeof(T)));
+
+            return default!;
+        }
+
+        throw exception;
+    }
 
     private bool? GetBooleanOption(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) =>
         TryGetOptionValue<bool>(out var value, name, aliases, shortNames) ? value : null;
@@ -51,7 +119,23 @@ public partial struct CliParseResult
     {
         if (_argCounter.Count > 0)
         {
-            throw new InvalidOperationException("Named option values must be used before unnamed argument values. Otherwise, the named options and their values could be returned as argument values.");
+            var message = "Named option values must be used before unnamed argument values. Otherwise, the named options and their values could be returned as argument values.";
+            var exception = new InvalidOperationException(message);
+
+            if (_onError is not null)
+            {
+                _onError(new CliError(
+                    CliErrorKind.OptionsAfterArguments,
+                    message,
+                    exception,
+                    optionName: name,
+                    expectedType: typeof(T)));
+
+                value = default;
+                return false;
+            }
+
+            throw exception;
         }
 
         // Infer the first character as a short name if it is not already used
@@ -61,7 +145,23 @@ public partial struct CliParseResult
         {
             if (option is not Option<T> optionT)
             {
-                throw new InvalidCastException($"Option '{name}' is not defined as type '{typeof(T).Name}'.");
+                var message = $"Option '{name}' is not defined as type '{typeof(T).Name}'.";
+                var exception = new InvalidCastException(message);
+
+                if (_onError is not null)
+                {
+                    _onError(new CliError(
+                        CliErrorKind.OptionTypeMismatch,
+                        message,
+                        exception,
+                        optionName: name,
+                        expectedType: typeof(T)));
+
+                    value = default;
+                    return false;
+                }
+
+                throw exception;
             }
 
             var (rootCommand, config) = BuildParser();

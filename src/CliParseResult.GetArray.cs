@@ -51,10 +51,10 @@ public partial struct CliParseResult
     public string[]? GetStrings(string name, char shortName) => GetNullableReferenceOptionValue<string[]>(name, shortNames: [shortName]);
     public string[]? GetStrings(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<string[]>(name, aliases, shortNames);
 
-    public char[]? GetChars() => GetNullableReferenceArgumentValue<string[]>()?.Select(ConvertStringsToChars).ToArray();
-    public char[]? GetChars(string name) => GetNullableReferenceOptionValue<string[]>(name)?.Select(ConvertStringsToChars).ToArray();
-    public char[]? GetChars(string name, char shortName) => GetNullableReferenceOptionValue<string[]>(name, shortNames: [shortName])?.Select(ConvertStringsToChars).ToArray();
-    public char[]? GetChars(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<string[]>(name, aliases, shortNames)?.Select(ConvertStringsToChars).ToArray();
+    public char[]? GetChars() => ConvertStringsToCharsArray(GetNullableReferenceArgumentValue<string[]>());
+    public char[]? GetChars(string name) => ConvertStringsToCharsArray(GetNullableReferenceOptionValue<string[]>(name), name);
+    public char[]? GetChars(string name, char shortName) => ConvertStringsToCharsArray(GetNullableReferenceOptionValue<string[]>(name, shortNames: [shortName]), name);
+    public char[]? GetChars(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => ConvertStringsToCharsArray(GetNullableReferenceOptionValue<string[]>(name, aliases, shortNames), name);
 
     public DateTime[]? GetDateTimes() => GetNullableReferenceArgumentValue<DateTime[]>();
     public DateTime[]? GetDateTimes(string name) => GetNullableReferenceOptionValue<DateTime[]>(name);

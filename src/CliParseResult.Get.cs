@@ -52,9 +52,9 @@ public partial struct CliParseResult
     public string? GetString(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<string>(name, aliases, shortNames);
 
     public char? GetChar() => ConvertStringToChar(GetNullableReferenceArgumentValue<string>());
-    public char? GetChar(string name) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name));
-    public char? GetChar(string name, char shortName) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name, shortNames: [shortName]));
-    public char? GetChar(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name, aliases, shortNames));
+    public char? GetChar(string name) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name), name);
+    public char? GetChar(string name, char shortName) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name, shortNames: [shortName]), name);
+    public char? GetChar(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name, aliases, shortNames), name);
 
     public DateTime? GetDateTime() => GetNullableStructArgumentValue<DateTime>();
     public DateTime? GetDateTime(string name) => GetNullableStructOptionValue<DateTime>(name);
