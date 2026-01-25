@@ -51,10 +51,10 @@ public partial struct CliParseResult
     public string[] GetRequiredStrings(string name, char shortName) => GetNullableReferenceOptionValue<string[]>(name, shortNames: [shortName]) ?? ThrowMissingRequiredOption<string[]>(name);
     public string[] GetRequiredStrings(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<string[]>(name, aliases, shortNames) ?? ThrowMissingRequiredOption<string[]>(name);
 
-    public char[] GetRequiredChars() => GetNullableReferenceArgumentValue<string[]>()?.Select(ConvertStringsToChars).ToArray() ?? ThrowMissingRequiredArgument<char[]>();
-    public char[] GetRequiredChars(string name) => GetNullableReferenceOptionValue<string[]>(name)?.Select(ConvertStringsToChars).ToArray() ?? ThrowMissingRequiredOption<char[]>(name);
-    public char[] GetRequiredChars(string name, char shortName) => GetNullableReferenceOptionValue<string[]>(name, shortNames: [shortName])?.Select(ConvertStringsToChars).ToArray() ?? ThrowMissingRequiredOption<char[]>(name);
-    public char[] GetRequiredChars(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<string[]>(name, aliases, shortNames)?.Select(ConvertStringsToChars).ToArray() ?? ThrowMissingRequiredOption<char[]>(name);
+    public char[] GetRequiredChars() => ConvertStringsToCharsArray(GetNullableReferenceArgumentValue<string[]>()) ?? ThrowMissingRequiredArgument<char[]>();
+    public char[] GetRequiredChars(string name) => ConvertStringsToCharsArray(GetNullableReferenceOptionValue<string[]>(name), name) ?? ThrowMissingRequiredOption<char[]>(name);
+    public char[] GetRequiredChars(string name, char shortName) => ConvertStringsToCharsArray(GetNullableReferenceOptionValue<string[]>(name, shortNames: [shortName]), name) ?? ThrowMissingRequiredOption<char[]>(name);
+    public char[] GetRequiredChars(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => ConvertStringsToCharsArray(GetNullableReferenceOptionValue<string[]>(name, aliases, shortNames), name) ?? ThrowMissingRequiredOption<char[]>(name);
 
     public DateTime[] GetRequiredDateTimes() => GetNullableReferenceArgumentValue<DateTime[]>() ?? ThrowMissingRequiredArgument<DateTime[]>();
     public DateTime[] GetRequiredDateTimes(string name) => GetNullableReferenceOptionValue<DateTime[]>(name) ?? ThrowMissingRequiredOption<DateTime[]>(name);

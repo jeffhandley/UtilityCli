@@ -52,9 +52,9 @@ public partial struct CliParseResult
     public string GetRequiredString(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => GetNullableReferenceOptionValue<string>(name, aliases, shortNames) ?? ThrowMissingRequiredOption<string>(name);
 
     public char GetRequiredChar() => ConvertStringToChar(GetNullableReferenceArgumentValue<string>()) ?? ThrowMissingRequiredArgument<char>();
-    public char GetRequiredChar(string name) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name)) ?? ThrowMissingRequiredOption<char>(name);
-    public char GetRequiredChar(string name, char shortName) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name, shortNames: [shortName])) ?? ThrowMissingRequiredOption<char>(name);
-    public char GetRequiredChar(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name, aliases, shortNames)) ?? ThrowMissingRequiredOption<char>(name);
+    public char GetRequiredChar(string name) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name), name) ?? ThrowMissingRequiredOption<char>(name);
+    public char GetRequiredChar(string name, char shortName) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name, shortNames: [shortName]), name) ?? ThrowMissingRequiredOption<char>(name);
+    public char GetRequiredChar(string name, IEnumerable<string>? aliases = null, IEnumerable<char>? shortNames = null) => ConvertStringToChar(GetNullableReferenceOptionValue<string>(name, aliases, shortNames), name) ?? ThrowMissingRequiredOption<char>(name);
 
     public DateTime GetRequiredDateTime() => GetNullableStructArgumentValue<DateTime>() ?? ThrowMissingRequiredArgument<DateTime>();
     public DateTime GetRequiredDateTime(string name) => GetNullableStructOptionValue<DateTime>(name) ?? ThrowMissingRequiredOption<DateTime>(name);

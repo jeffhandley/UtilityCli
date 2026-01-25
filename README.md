@@ -37,3 +37,32 @@ UtilityCli is not intended for CLI applications that are distributed to other us
 * Options must always be extracted before arguments (to avoid ambiguity)
 
 With a fully-modeled System.CommandLine CLI, there is no ambiguity in terms of how options and arguments are extracted. Using UtilityCli and skipping the step of modeling your CLI can introduce such ambiguities. For utility apps you author for yourself or your team, and even for single-use applications though, this trade-off can save time and frustration.
+
+## Error handling
+
+Pass an error callback to `Parse` to display usage information when parsing fails. The callback receives a `CliError` with full context about what went wrong.
+
+```csharp
+var cli = UtilityCli.CliArgs.Parse(args, error =>
+{
+    Console.WriteLine($"Error: {error.Message}");
+    Console.WriteLine();
+    Console.WriteLine("Usage: myapp --org <org> --repo <repo> [labels...]");
+    Console.WriteLine("  --org, -o    Organization or owner name (required)");
+    Console.WriteLine("  --repo, -r   Repository name (required)");
+});
+
+string org = cli.GetRequiredString("org");
+string repo = cli.GetRequiredString("repo");
+```
+
+The `CliError` class provides:
+
+* `Kind` - The type of error (`MissingRequiredArgument`, `MissingRequiredOption`, `InvalidArgumentValue`, `InvalidOptionValue`, `OptionsAfterArguments`, `OptionTypeMismatch`)
+* `Message` - A descriptive error message
+* `Exception` - The exception that would be thrown if no callback were registered
+* `OptionName` - The name of the option that caused the error (if applicable)
+* `ExpectedType` - The expected type for the value
+* `RawValue` - The raw string value that could not be parsed (if applicable)
+
+The callback is invoked instead of throwing the exception, allowing you to display helpful information to the user and exit gracefully.
